@@ -36,5 +36,8 @@ class Menu extends Model
         'price' => 'decimal:2',
     ];
 
-    
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'menuId');
+    }
 }

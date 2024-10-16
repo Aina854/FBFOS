@@ -7,28 +7,30 @@
         <ul class="navbar-nav ml-auto">
             @if(Auth::check() && Auth::user()->category == 'Customer')
                 <!-- For logged-in customers -->
-                <li class="nav-item active">
+                <li class="nav-item {{ request()->routeIs('homepageCustomer') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('homepageCustomer') }}"><i class="fas fa-home"></i> Home</a>
                 </li>
-                <li class="nav-item">
-    <a class="nav-link" href="{{ route('showCart', ['cartId' => Auth::user()->cart->cartId]) }}">
-        <i id="cart-icon" class="fas fa-shopping-cart"></i>
-        <span id="cart-count" class="badge badge-pill badge-danger">
-            {{ Auth::user()->cart->cartItems()->sum('quantity') }}
-        </span>
-        Cart
-    </a>
-</li>
-
-
-                
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('orders.index') }}">
-                        <i class="fas fa-list-alt"></i> Orders
+                <li class="nav-item {{ request()->routeIs('showCart', ['cartId' => Auth::user()->cart->cartId]) ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('showCart', ['cartId' => Auth::user()->cart->cartId]) }}">
+                        <i id="cart-icon" class="fas fa-shopping-cart"></i> Cart
+                        <span id="cart-count" class="badge badge-pill badge-danger">
+                            {{ Auth::user()->cart->cartItems()->sum('quantity') }}
+                        </span>
                     </a>
                 </li>
-                
-
+                <li class="nav-item {{ request()->routeIs('orders.index') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('orders.index') }}">
+                        <i class="fas fa-list-alt"></i> Orders
+                        @php
+                           $pendingCount = Auth::user()->orders()
+                            ->whereIn('orderStatus', ['pending', 'preparing', 'ready for pickup'])
+                            ->count();
+                        @endphp
+                        @if($pendingCount > 0)
+                            <span class="badge badge-warning">{{ $pendingCount }}</span>
+                        @endif
+                    </a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user"></i> Profile

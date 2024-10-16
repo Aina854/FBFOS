@@ -36,6 +36,12 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class, 'orderId', 'orderId');
     }
 
+    public function feedback()
+    {
+        return $this->hasMany(Feedback::class, 'orderItemId');
+    }
+
+
     public function feedbacks()
     {
         return $this->hasMany(Feedback::class); // This establishes the one-to-many relationship

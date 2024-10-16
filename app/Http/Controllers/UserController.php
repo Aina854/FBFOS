@@ -279,20 +279,47 @@ public function showCustomerDashboard()
         return redirect()->route('login')->withErrors(['You do not have access to this page']);
     }
 
-    // Fetch the menus from the database
-    $menus = Menu::all(); // You can modify this to add filters or pagination if needed
+    // Fetch the menus with orderItems, orders, and feedbacks
+    $menus = Menu::with(['orderItems.order', 'orderItems.feedback'])->get();
 
-    // Fetch the cart for the logged-in user using the relationship
+    foreach ($menus as $menu) {
+        // Extract feedback for this menu from its orderItems
+        $feedbacks = $menu->orderItems->flatMap(function ($orderItem) {
+            // Ensure the feedback is fetched only for valid orders (linked through order)
+            return $orderItem->order ? $orderItem->feedback : collect();
+        });
+
+        // Log the feedbacks for debugging
+        Log::info('Feedbacks for Menu ID ' . $menu->menuId . ':', ['feedbacks' => $feedbacks]);
+
+        // Calculate the average rating and reviews count
+        $averageRating = $feedbacks->avg('rating'); // Calculate average rating
+        $reviewsCount = $feedbacks->count(); // Count reviews
+
+        // Log the calculated average rating and reviews count
+        Log::info('Average Rating and Review Count for Menu ID ' . $menu->menuId . ':', [
+            'averageRating' => $averageRating,
+            'reviewsCount' => $reviewsCount,
+        ]);
+
+        // Assign the calculated values to the menu item
+        $menu->averageRating = $averageRating ? round($averageRating, 1) : 'No rating';
+        $menu->reviewsCount = $reviewsCount;
+    }
+
+    // Fetch the cart for the logged-in user
     $user = Auth::user();
-    $cart = $user->cart; // This will get the associated cart
+    $cart = $user->cart;
 
     // Fetch the latest order ID or set to null if no orders exist
     $order = $user->orders()->latest()->first();
-    $orderId = $order ? $order->id : null; // Safely retrieve the order ID
+    $orderId = $order ? $order->id : null;
 
-    // Pass the menus, cart, and orderId to the view
-    return view('customer.customer-home', compact('menus', 'cart', 'orderId'));
+    // Pass menus, cart, and orderId to the view
+    return view('customer.customer-home', compact('menus','cart', 'orderId'));
 }
+
+
 
 
 

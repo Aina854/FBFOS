@@ -90,3 +90,64 @@
 .star.selected {
     color: gold;     /* Highlight the stars when selected */
 }
+
+
+.rating-container {
+    display: flex; /* Align items in a row */
+    align-items: center; /* Center items vertically */
+    margin-top: 0.5rem; /* Add space between price and rating */
+}
+
+.rating {
+    color: gold; /* Color for the stars */
+    font-size: 1rem; /* Font size for the rating */
+    margin-right: 0.5rem; /* Space between the rating and review count */
+}
+
+.reviews-count {
+    font-size: 0.9rem; /* Slightly smaller font for review count */
+    color: #6c757d; /* Grey color for review count */
+}
+
+.stars1 {
+    display: flex;
+}
+
+.star1 {
+    font-size: 1.5rem; /* Adjust the size of the stars */
+    color: lightgray; /* Color for unfilled stars */
+    margin-right: 2px; /* Spacing between stars */
+}
+
+.star1.filled {
+    color: gold; /* Color for filled stars */
+}
+.feedback-item {
+    height: 120px; /* Adjust this height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal overflow */
+}
+
+.feedback-card1 {
+    background-color: #f8f9fa; /* Light gray background */
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.feedback-card h6 {
+    font-weight: 600; /* Bold for emphasis */
+}
+
+.feedback-card p {
+    font-size: 1rem; /* Standard font size */
+    color: #333; /* Dark text color for readability */
+}
+
+.rating-stars i {
+    font-size: 1.2em; /* Adjust size of stars */
+}
+
+.card-body {
+    padding: 15px; /* Adjust padding for better spacing */
+}
