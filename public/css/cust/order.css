@@ -1,0 +1,209 @@
+/* Specific styles for the Order Summary */
+.order-summary {
+    background-color: #ffffff; /* White */
+    border: 1px solid #e0e0e0; /* Light Gray */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; /* Space below */
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333; /* Darker text for better readability */
+    margin-bottom: 20px;
+}
+
+.table {
+    margin-bottom: 20px; /* Space below table */
+}
+
+.item-details {
+    display: flex;
+    align-items: center;
+}
+
+.item-name {
+    margin-left: 10px; /* Space between image and text */
+    font-size: 18px;
+    color: #555; /* Softer text color */
+}
+
+.total-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e44d26; /* Red-Orange */
+    margin-top: 20px; /* Space above total price */
+}
+
+.remarks {
+    color: black;
+    border: 1px solid #e0e0e0; /* Light Gray for better visibility */
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px; /* Space above remarks */
+}
+
+.btn-backtc, .btn-proceedtp {
+    border-radius: 5px !important;
+    padding: 10px 20px !important;
+    margin-right: 10px !important; /* Space between buttons */
+}
+
+.btn-backtc {
+    background-color: #6c757d !important; /* Dark Gray */
+    color: #ffffff !important; /* White */
+}
+
+.btn-proceedtp {
+    background-color: #e44d26 !important; /* Red-Orange */
+    color: #ffffff !important; /* White */
+}
+
+
+.menu-image {
+    width: 100px; /* Fixed width */
+    height: 100px; /* Fixed height */
+    object-fit: cover; /* Ensure the image covers the specified dimensions */
+}
+
+
+/* Create a smooth glowing flow animation for the customer order page */
+@keyframes smoothFlowCustomer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: 200px 0;
+    }
+}
+
+.progress-bar-flow-custom {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    background-size: 200px 100%;
+    animation: smoothFlowCustomer 3s linear infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ensure the progress bar fills based on the value */
+.progress-bar {
+    position: relative;
+    z-index: 1; /* Ensure it appears on top */
+    background-color: #17a2b8; /* Use a different color for the customer */
+}
+
+.progress {
+    position: relative;
+    background-color: #f5f5f5;
+}
+
+.progress-bar-flow-custom:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    background-size: 200px 100%;
+    animation: smoothFlowCustomer 3s linear infinite;
+    z-index: 0;
+}
+
+
+
+.sidebar {
+    border: 1px solid #dee2e6; /* Optional border */
+    background: linear-gradient(135deg, #a9c1e7, #2b5b8f); /* Blue gradient */
+    border-radius: 0.25rem; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+
+.sidebar h4 {
+    margin-bottom: 20px; /* Space below the heading */
+}
+
+.sidebar .list-group-item {
+    transition: background-color 0.3s; /* Smooth hover effect */
+}
+
+.sidebar .list-group-item:hover {
+    background-color: #f8f9fa; /* Change background on hover */
+}
+
+
+.container .current-order-card {
+    background-color: #f0f8ff; /* Light blue for current orders */
+    border-left: 5px solid #007bff; /* Blue border */
+}
+
+.container .past-order-card {
+
+    background-color: #fff5e6; /* Light orange for past orders */
+    border-left: 5px solid #ff9900; /* Orange border */
+}
+
+.container .pending-order-card {
+    background-color: #fff9db; /* Light yellow for pending orders */
+    border-left: 5px solid #ffcc00; /* Gold border */
+}
+
+i {
+    font-size: 1.2em; /* Adjust size as needed */
+    margin-right: 5px; /* Space between icon and text */
+}
+
+/* Tips Section Styles */
+.tips-card {
+    position: fixed;
+    top: 380px; /* Adjusts the vertical position from the top */
+    right: 1175px; /* Adjusts the horizontal position from the right */
+    width: 300px; /* Set a width for the tips card */
+    z-index: 1000; /* Ensures the tips card is above other content */
+    border: 1px solid #ccc; /* Light gray border for the card */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.tips-card .card-header {
+    background-color: #004080; /* Dark blue background for the header */
+    color: white; /* White text color for contrast */
+    padding: 10px 15px; /* Padding around the header text */
+    border-top-left-radius: 8px; /* Rounded corners for the top left */
+    border-top-right-radius: 8px; /* Rounded corners for the top right */
+}
+
+.tips-card .card-body {
+    background-color: #f9f9f9; /* Light gray background for the body */
+    padding: 15px; /* Padding inside the card body */
+}
+
+.tips-card ul {
+    list-style-type: none; /* Remove default list styles */
+    padding-left: 0; /* Remove padding from the left */
+}
+
+.tips-card ul li {
+    font-size: 16px; /* Increase font size for better readability */
+    color: #333; /* Dark gray color for list items */
+    padding: 5px 0; /* Spacing between list items */
+}
+
+.tips-card .alert-warning {
+    background-color: #fff3cd; /* Light yellow background for warning alert */
+    border-color: #ffeeba; /* Yellow border for warning alert */
+    color: #856404; /* Dark yellow/brown text for warning alert */
+    padding: 10px; /* Padding for alert box */
+    margin-top: 10px; /* Margin above the alert box */
+    border-radius: 5px; /* Rounded corners for alert box */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tips-card {
+        margin-top: 20px; /* Space from the top on smaller screens */
+    }
+}

@@ -1,0 +1,124 @@
+/* layout.css */
+
+/* General Container Styles */
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.center-heading {
+    text-align: center;
+}
+
+/* Form Styles */
+.login-form,
+.register-form {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Login Form Styles */
+.login-form {
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Register Form Styles */
+.register-form {
+    max-width: 900px;
+}
+
+/* Form Row Styles */
+.form-row {
+    display: flex;
+    gap: 15px; /* Space between columns */
+}
+
+/* Form Column Styles */
+.form-column {
+    flex: 1; /* Flexbox to allow columns to adjust width */
+}
+
+/* Form Group Styles */
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.form-group label {
+    width: auto; /* Allows for dynamic width */
+    margin-right: 10px;
+}
+
+/* Form Control Styles */
+.form-control {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Password Wrapper */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper .fa-eye,
+.password-wrapper .fa-eye-slash {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 1.2em;
+}
+
+.password-wrapper .fa-eye {
+    display: none;
+}
+
+.password-wrapper .fa-eye.show {
+    display: inline;
+}
+
+.password-wrapper .fa-eye-slash {
+    display: inline;
+}
+
+.password-wrapper .fa-eye-slash.hide {
+    display: none;
+}
+
+/* Table Styles */
+.form-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 5px; /* Adjust spacing between columns if needed */
+}
+
+.form-table td {
+    padding: 10px;
+    vertical-align: middle;
+    border: 0px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-table td:first-child {
+    width: 30%;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.form-table td:last-child {
+    width: 70%;
+}

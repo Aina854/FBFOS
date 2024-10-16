@@ -1,0 +1,53 @@
+#payment-result {
+    margin-top: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: #d9534f; /* Red for error messages */
+}
+
+/* Payment specific styles */
+
+.payment-container {
+    margin-top: 40px; /* Space above payment section */
+}
+
+.payment-header {
+    font-size: 24px; /* Header size for payment */
+    font-weight: bold; /* Bold header */
+    margin-bottom: 20px; /* Space below header */
+}
+
+.payment-summary {
+    border: 1px solid #ccc; /* Border for summary box */
+    padding: 15px; /* Padding inside the summary box */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #fff; /* White background */
+}
+
+.payment-details {
+    margin-top: 20px; /* Space above details */
+}
+
+.payment-input {
+    width: 100%; /* Full width input */
+    padding: 10px; /* Padding for input */
+    border: 1px solid #ccc; /* Border for input */
+    border-radius: 5px; /* Rounded corners */
+    margin-bottom: 15px; /* Space below input */
+}
+
+.payment-button {
+    width: 100%; /* Full width button */
+    padding: 10px; /* Padding for button */
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+.payment-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}

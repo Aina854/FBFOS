@@ -1,0 +1,130 @@
+.card {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+
+.card-header {
+    background-color: #e9ecef;
+    padding: 10px;
+}
+
+.badge {
+    font-size: 0.9rem;
+}
+
+
+.card-img-top {
+    object-fit: cover;
+    height: 200px;
+    width: 100%;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Unavailable items */
+.unavailable-image {
+    filter: grayscale(100%);
+}
+
+.card.unavailable-menu {
+    color: #999;
+}
+
+/* Feedback Entry */
+.feedback-entry {
+    border: 1px solid #e1e1e1; /* Light border for separation */
+    padding: 15px; /* Padding inside feedback box */
+    margin-bottom: 15px; /* Space between feedback entries */
+    border-radius: 5px; /* Rounded corners */
+    background-color: white; /* Light background for feedback entries */
+}
+
+/* User Name */
+.feedback-entry h4 {
+    margin-bottom: 10px; /* Space below name */
+    font-size: 18px; /* Slightly larger font for names */
+    color: #333; /* Darker text for emphasis */
+}
+
+/* Ratings */
+.feedback-entry p {
+    margin: 5px 0; /* Margin for rating paragraph */
+}
+
+/* Feedback Comments Section */
+.feedback-comments {
+    margin-top: 10px; /* Space above comments section */
+}
+
+/* Feedback Comment Box */
+.feedback-comment-box {
+    border: 1px solid #b7bcc1; /* Border color for feedback comments */
+    padding: 10px; /* Padding inside the comment box */
+    border-radius: 4px; /* Rounded corners */
+    background-color: #f9f9f9; /* Light blue background for comments */
+    margin-top: 5px; /* Margin above comments */
+}
+
+/* Staff Response Section */
+.feedback-response {
+    margin-top: 15px; /* Space above staff response */
+    font-style: italic; /* Italic for staff responses */
+}
+
+/* Time Display */
+.feedback-timestamp {
+    font-size: 12px; /* Smaller font for timestamps */
+    color: #777; /* Lighter color for less emphasis */
+}
+
+/* Menu Image */
+.feedback-comment-box img {
+    border-radius: 4px; /* Rounded corners for images */
+    margin-right: 10px; /* Space between image and text */
+    vertical-align: middle; /* Align images with text */
+}
+
+.staff-response-box {
+    background-color: #ccffcc; /* Light green background */
+    border-color: #c3e6cb; /* Green border */
+    padding: 15px; /* Padding around the content */
+    border-radius: 5px; /* Rounded corners */
+    margin-top: 10px; /* Space above the response box */
+    color: #721c24;
+}
+
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px; /* Adjust padding on smaller screens */
+    }
+
+    .feedback-entry {
+        padding: 10px; /* Adjust feedback entry padding */
+    }
+
+    h2 {
+        font-size: 20px; /* Smaller heading on mobile */
+    }
+}
+
+
+
+.star {
+    font-size: 30px; /* Size the stars */
+    color: #ccc;     /* Default star color */
+    cursor: pointer; /* Add pointer cursor for clickable effect */
+    transition: color 0.2s ease-in-out; /* Smooth transition on hover or click */
+}
+
+.star.selected {
+    color: gold;     /* Highlight the stars when selected */
+}

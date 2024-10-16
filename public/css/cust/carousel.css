@@ -1,0 +1,61 @@
+/* Carousel styles */
+.carousel-item img {
+    object-fit: cover;
+    max-height: 400px;
+}
+
+.fly-img {
+    position: absolute;
+    width: 50px; /* Adjust as needed */
+    z-index: 9999;
+    transition: all 1s ease-in-out;
+}
+
+/* Optional: Animate the cart icon (e.g., make it bounce) when item is added */
+.cart-bounce {
+    animation: bounce 0.5s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+.welcome-section {
+    position: relative;
+    color: #ffffff; /* White text for better visibility */
+    font-family: 'Lobster', cursive;
+}
+
+.welcome-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -200%);
+    text-align: center;
+    color: #fff; /* Set text color to white for better visibility */
+    padding: 20px; /* Add some padding for better readability */
+    font-family: 'Lobster', cursive;
+}
+
+
+.welcome-content h2 {
+    font-size: 50px;
+    margin-bottom: -40px;
+    font-family: 'Lobster', cursive;
+    color: #fff; /* Set text color to white for better visibility */
+}
+
+.welcome-content p {
+    font-size: 18px;
+    margin-bottom: -30px;
+    font-family: 'Lobster', cursive;
+    color: #fff; /* Set text color to white for better visibility */
+}
+
+
+
+

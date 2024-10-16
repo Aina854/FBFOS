@@ -1,0 +1,209 @@
+/* Card styles */
+.card {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+
+.card-header {
+    background-color: #e9ecef;
+    padding: 10px;
+}
+
+.badge {
+    font-size: 0.9rem;
+}
+
+
+.card-img-top {
+    object-fit: cover;
+    height: 200px;
+    width: 100%;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Unavailable items */
+.unavailable-image {
+    filter: grayscale(100%);
+}
+
+.card.unavailable-menu {
+    color: #999;
+}
+
+/*side menu css*/
+.side-menu-container {
+    margin-top: 20px;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent items from wrapping to the next line */
+}
+
+.side-menu-scroll {
+    display: flex; /* Use flexbox to arrange children in a row */
+}
+
+.side-menu-card {
+    display: inline-block; /* Ensure the cards are treated as inline-block for horizontal layout */
+    width: 200px; /* Set a fixed width for the card */
+    margin-right: 10px; /* Add margin between items */
+    border: 1px solid #e0e0e0; /* Light Gray */
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff; /* White */
+    padding: 10px;
+}
+
+/* Additional styles remain unchanged */
+
+.side-menu-image {
+    height: 150px; /* Set height to 100% of the parent card */
+    width: 100%; /* Set width to 100% of the parent card */
+    object-fit: cover; /* Ensure the image covers the specified dimensions without distortion */
+    border-radius: 8px; /* Optional: Add border radius to match the card's style */
+}
+
+
+.side-menu-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #212529; /* Black */
+}
+
+.side-menu-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #e44d26; /* Red-Orange */
+}
+
+.side-menu-add-to-cart-btn {
+    background-color: #007bff; /* Blue */
+    color: #ffffff; /* White */
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.side-menu-add-to-cart-btn:hover {
+    background-color: #0056b3; /* Darker Blue */
+}
+
+.side-menu-quantity-input {
+    width: 60px; /* Set a fixed width for the quantity input */
+    padding: 5px; /* Add some padding for better appearance */
+    border: 1px solid #e0e0e0; /* Light Gray border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 14px; /* Font size for better readability */
+    margin-right: 5px; /* Add space between the input and button */
+}
+
+
+/*cart css*/
+.empty-cart-message {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.empty-cart-message i {
+    color: #6c757d; /* Dark Gray */
+    margin-bottom: 20px;
+}
+
+.empty-cart-message p {
+    font-size: 24px;
+    color: #6c757d; /* Dark Gray */
+}
+
+.total-price-container {
+    display: flex;
+    align-items: center;
+}
+
+.total-price-container span strong {
+    font-weight: bold;
+    font-size: 20px; /* Adjust the font size as needed */
+    color: #e44d26; /* Red-Orange */
+}
+
+.quantity-input {
+    width: 60px;
+}
+
+.menu-image {
+    height: 180px; /* Increased height for larger image */
+    width: 260px; /* Increased width for larger image */
+    object-fit: cover; /* Ensure the image covers the specified dimensions */
+}
+
+.cart-item {
+    position: relative;
+    border: 1px solid #e0e0e0; /* Light Gray */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff; /* White */
+    padding: 20px;
+    display: flex; /* Display items in a row */
+    position: relative; /* Relative positioning for absolute child */
+    overflow: hidden; /* Ensure delete button stays within container */
+}
+
+.cart-item-image {
+    margin-left: 630px; /* Space between text and image */
+    margin-right: 20px; /* Space between text and image */
+    width: 100%; /* Set a width for the image */
+    height: 180px; /* Set a fixed height */
+    object-fit: cover; /* Ensure the image covers the specified dimensions */
+    display: block; /* Prevent any inline spacing */
+    border-radius: 5px; /* Optional: add rounded corners */
+}
+
+
+.item-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #212529; /* Black */
+}
+
+.item-description {
+    color: #6c757d; /* Dark Gray */
+    margin-bottom: 10px;
+}
+
+.item-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e44d26; /* Red-Orange */
+}
+
+.delete-btn,
+.edit-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 20px;
+    position: absolute;
+}
+
+.delete-btn {
+    top: 10px; /* Align with delete button */
+    right: 6px; 
+}
+
+.edit-btn {
+    bottom: 10px; /* Align with edit button */
+    right: 10px;
+}
+

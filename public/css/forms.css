@@ -1,0 +1,42 @@
+/* forms.css */
+.form-control {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper .fa-eye, .password-wrapper .fa-eye-slash {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 1.2em;
+}
+
+.password-wrapper .fa-eye {
+    display: none;
+}
+
+.password-wrapper .fa-eye.show {
+    display: inline;
+}
+
+.password-wrapper .fa-eye-slash {
+    display: inline;
+}
+
+.password-wrapper .fa-eye-slash.hide {
+    display: none;
+}
+
+.hide {
+    display: none;
+}

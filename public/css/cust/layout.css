@@ -1,0 +1,26 @@
+/* Layout and body styles */
+body {
+    padding-top: 56px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 80px;
+    margin: 0; /* Ensure no default margin */
+}
+
+html {
+    height: 100%;
+}
+
+.custom-container {
+    width: 100%; /* Full width */
+    margin: 0 auto; /* Center content */
+    padding: 0 10px; /* Add padding to prevent content from touching edges */
+}
+
+.menu-section {
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+

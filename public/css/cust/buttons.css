@@ -1,0 +1,106 @@
+/* Button styles */
+.cta-btn {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.cta-btn:hover {
+    background-color: #218838;
+}
+
+/* Quantity input styling */
+.quantity-input {
+    width: 50px;
+    text-align: center;
+}
+
+/* Cart buttons */
+.btn-back {
+    background-color: lightblue; /* Light Blue */
+    color: black; /* Black */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.btn-proceed {
+    background-color: #e44d26; /* Red-Orange */
+    color: #ffffff; /* White */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+}
+
+.checkout-btn {
+    background-color: #e44d26; /* Red-Orange */
+    color: #ffffff; /* White */
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.checkout-btn:hover {
+    background-color: #c6391a; /* Darker Red-Orange */
+}
+
+
+.cart-item-controls {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Center items vertically */
+}
+
+.btn-decrease, .btn-increase {
+    width: 40px; /* Set width for the buttons */
+    height: 40px; /* Set height for the buttons */
+    border-radius: 50%; /* Make buttons circular */
+    border: none; /* Remove border */
+    display: flex; /* Center the icon */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    font-size: 20px; /* Adjust font size for visibility */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    color: white; /* Set text color to white */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+.btn-increase {
+    background-color: green; /* Green background */
+}
+
+.btn-decrease {
+    background-color: red; /* Red background */
+}
+
+.btn-increase:hover {
+    background-color: darkgreen; /* Darker green on hover */
+}
+
+.btn-decrease:hover {
+    background-color: darkred; /* Darker red on hover */
+}
+
+/* Style for the quantity input */
+.quantity-input {
+    width: 50px; /* Adjust width as needed */
+    height: 40px; /* Same height as buttons */
+    text-align: center; /* Center the text */
+    border: 1px solid #ccc; /* Optional border */
+    border-radius: 5px; /* Rounded corners */
+    margin: 0 10px; /* Space between buttons and input */
+    font-size: 16px; /* Adjust font size */
+    background-color: #f8f9fa; /* Light background */
+}
+
