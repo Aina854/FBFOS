@@ -207,3 +207,20 @@
     right: 10px;
 }
 
+.unavailable {
+    background-color: #f0f0f0; /* Light grey background */
+    color: #888888; /* Grey text color */
+    opacity: 0.7; /* Slight transparency for visual effect */
+}
+
+.unavailable img {
+    filter: grayscale(100%); /* Make image grey */
+    opacity: 0.5;
+}
+
+.unavailable .item-name, 
+.unavailable .item-price,
+.unavailable .item-createdAt,
+.unavailable .item-unavailable {
+    color: #888888; /* Grey color for text */
+}

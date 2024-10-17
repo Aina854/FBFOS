@@ -5,6 +5,22 @@
 @section('content')
 <div class="container">
     <h2 class="mb-4">Menu Management</h2>
+
+   <!-- Section for Stock Alerts -->
+<div class="alert-container mb-4" style="background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+    <h4 style="margin-bottom: 10px; font-weight: bold; color: #721c24;">Stock Alerts</h4>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="flex: 1;">
+            <span style="font-weight: bold; color: #856404;">Low Stock:</span>
+            <span class="badge" style="background-color: #ffc107; color: #212529; margin-left: 5px; padding: 5px 10px; border-radius: 5px; font-size: 1.1em;">{{ $lowStockCount }}</span>
+        </div>
+        <div style="flex: 1; text-align: right;">
+            <span style="font-weight: bold; color: #721c24;">Out of Stock:</span>
+            <span class="badge" style="background-color: #dc3545; color: #fff; margin-left: 5px; padding: 5px 10px; border-radius: 5px; font-size: 1.1em;">{{ $outOfStockCount }}</span>
+        </div>
+    </div>
+</div>
+
     
     <!-- Form for Searching Menu -->
 <div class="container text-left mb-4">
@@ -34,7 +50,7 @@
                     <th>Menu Name</th>
                     <th>Menu Category</th>
                     <th>Price</th>
-                    <th>Availability</th>
+                    <th>Quantity in Stock</th> <!-- Updated Header -->
                     <th>Description</th>
                     <th>Action</th>
                 </tr>
@@ -53,7 +69,16 @@
         <td>{{ $menu->menuName }}</td>
         <td>{{ $menu->menuCategory }}</td>
         <td class="item-price">RM{{ number_format($menu->price, 2) }}</td>
-        <td>{{ $menu->availability }}</td>
+        <td>
+    @if($menu->quantityStock <= 0)
+        <span class="badge" style="background-color: #dc3545; color: #fff; padding: 5px 10px; border-radius: 5px;">Out of Stock</span>
+    @elseif($menu->quantityStock <= 10)
+        <span class="badge" style="background-color: #ffc107; color: #212529; padding: 5px 10px; border-radius: 5px;">Low Stock ({{ $menu->quantityStock }})</span>
+    @else
+        <span class="badge" style="background-color: #28a745; color: #fff; padding: 5px 10px; border-radius: 5px;">In Stock ({{ $menu->quantityStock }})</span>
+    @endif
+</td>
+
         <td>{{ $menu->description }}</td>
         <td>
             <a href="{{ route('menus.edit', $menu->menuId) }}" class="btn btn-warning btn-sm">

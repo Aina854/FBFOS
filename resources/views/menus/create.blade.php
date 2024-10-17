@@ -29,12 +29,8 @@
                 <input type="number" name="price" id="price" class="form-control" step="0.01" required>
             </div>
             <div class="form-group">
-                <label for="availability">Availability</label>
-                <label class="switch">
-                    <input type="checkbox" id="availabilityToggle" name="availabilityToggle">
-                    <span class="slider round"></span>
-                </label>
-                <input type="hidden" id="availability" name="availability" value="No">
+                <label for="quantityStock">Quantity in Stock</label>
+                <input type="number" name="quantityStock" id="quantityStock" class="form-control" min="0" required>
             </div>
             <div class="form-group">
                 <label for="description">Description</label>

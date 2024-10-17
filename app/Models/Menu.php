@@ -27,7 +27,7 @@ class Menu extends Model
         'menuName',
         'menuCategory',
         'price',
-        'availability',
+        'quantityStock', // Add quantityStock here
         'description',
     ];
 

@@ -34,6 +34,7 @@ class PaymentController extends Controller
 
     Log::info('Proceeding to payment', ['cartId' => $cartId]);
 
+    try{
     DB::transaction(function () use ($request, $cartId, &$order, &$totalAmount, &$payment, &$lineItems) {
         // Create a new order
         $order = Order::create([
@@ -56,6 +57,13 @@ class PaymentController extends Controller
             // Retrieve menu item details
             $menuItem = Menu::findOrFail($item->menuId); // Ensure you have the correct model for your items
             Log::info('Retrieved menu item', ['menuItemId' => $menuItem->menuId]);
+
+            // Check stock availability
+        if ($item->quantity > $menuItem->quantityStock) {
+            // Stop the transaction and throw an exception
+            throw new \Exception("You cannot purchase more than what is in stock for {$menuItem->menuName}. Please adjust your order.");
+        }
+
 
             // Create OrderItem
             OrderItem::create([
@@ -122,6 +130,11 @@ class PaymentController extends Controller
             'last_attempt_at' => $payment->last_attempt_at,
         ]);
     });
+
+} catch (\Exception $e) {
+    // Redirect back with error message
+    return redirect()->back()->with('error', $e->getMessage());
+}
 
     Log::info('Line items for Stripe', ['lineItems' => $lineItems]);
 
@@ -200,6 +213,17 @@ public function paymentSuccess($orderId)
         // Retrieve the order items associated with the order
         $orderItems = OrderItem::where('orderId', $orderId)->get();
 
+
+        // Reduce the quantity in the menus table for each purchased item
+        foreach ($orderItems as $orderItem) {
+            $menu = Menu::find($orderItem->menuId); // Assuming you have menuId in OrderItem
+            if ($menu) {
+                // Reduce the stock quantity
+                $menu->quantityStock -= $orderItem->quantity; // Assuming you have quantity in OrderItem
+                $menu->save(); // Save the updated menu item
+            }
+        }
+
         // Prepare the alert message
         $alertMessage = "Payment Successful!\n" .
                         "Order ID: {$order->orderId}\n" .
@@ -207,7 +231,7 @@ public function paymentSuccess($orderId)
                         "Total Amount: MYR " . number_format($payment->paymentAmount, 2);
 
         // Flash the alert message to the session
-        session()->flash('alert', $alertMessage);
+        session()->flash('success', $alertMessage);
 
         // Redirect to the success page with the order details
         return view('payment.success', [

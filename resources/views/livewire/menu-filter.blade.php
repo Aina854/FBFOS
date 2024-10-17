@@ -36,6 +36,22 @@
                         <img src="{{ asset('storage/' . $menu->menuImage) }}" class="card-img-top" alt="{{ $menu->menuName }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ $menu->menuName }}</h5>
+                            <p class="card-quantity-stock" 
+                                style="color: 
+                                    <?php 
+                                        if($menu->quantityStock == 0) {
+                                            echo 'red'; 
+                                        } elseif($menu->quantityStock <= 10) {
+                                            echo 'orange'; 
+                                        } else {
+                                            echo 'green'; 
+                                        }
+                                    ?>
+                                ">
+                                <strong>Available Quantity: {{ $menu->quantityStock }}</strong>
+                            </p>
+
+
                             <p class="card-price">RM{{ number_format($menu->price, 2) }}</p>
                             
                             <div class="rating-container" 
@@ -43,6 +59,7 @@
                                  data-target="#feedbackModal" 
                                  data-menu-id="{{ $menu->menuId }}" 
                                  data-menu-name="{{ $menu->menuName }}">
+                                 
                                 <div class="stars1">
                                     @for ($i = 1; $i <= 5; $i++)
                                         <span class="star1 {{ (is_numeric($menu->averageRating) && $menu->averageRating > 0 && $i <= $menu->averageRating) ? 'filled' : '' }}">&starf;</span>
@@ -61,9 +78,31 @@
                                 @csrf
                                 <input type="hidden" name="cartId" value="{{ session('cartId') }}">
                                 <input type="hidden" name="menuId" value="{{ $menu->menuId }}">
-                                <input type="number" name="quantity" min="1" value="1" required>
-                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                
+                                <label for="quantity">Quantity:</label>
+                                <input 
+                                    type="number" 
+                                    name="quantity" 
+                                    min="1" 
+                                    max="{{ $menu->quantityStock }}" 
+                                    value="1" 
+                                    required
+                                    @if($menu->quantityStock == 0) disabled @endif
+                                >
+                                
+                                <button 
+                                    type="submit" 
+                                    class="btn btn-primary" 
+                                    @if($menu->quantityStock == 0) disabled @endif
+                                >
+                                    Add to Cart
+                                </button>
+                                
+                                @if($menu->quantityStock == 0)
+                                    <div class="text-danger">This item is currently out of stock.</div>
+                                @endif
                             </form>
+
 
                             <!-- Centered Button with arrow icon -->
                             <button class="btn btn-link center-icon-button" data-toggle="collapse" data-target="#description-{{ $menu->menuId }}" aria-expanded="false" aria-controls="description-{{ $menu->menuId }}">
@@ -85,17 +124,23 @@
                                                     @foreach($menu->feedbacks as $key => $feedback)
                                                         <div class="carousel-item {{ $key === 0 ? 'active' : '' }}">
                                                             <div class="card1 feedback-item mb-3">
-                                                                <div class="card-body" style="background-color: #f8f9fa;">
+                                                                <div class="card-body" style="background-color: #fff; padding: 15px; border-left: 4px solid #ffc107; border-radius: 5px; margin-bottom: 15px; box-shadow: none;">
                                                                     <h5 class="card-subtitle mb-2 text-muted" style="font-size: 0.9em;">
-                                                                        {{ $feedback->user->firstName }} {{ $feedback->user->lastName }} <br><br>
-                                                                        Rating: 
-                                                                        <span class="rating-stars">
+                                                                        <strong>
+                                                                        @if($feedback->anonymous === 'yes')
+                                                                            Anonymous
+                                                                        @else
+                                                                            {{ $feedback->user->firstName }} {{ $feedback->user->lastName }} <br>
+                                                                        @endif
+
+                                                                        <div class="rating-stars" style="font-size: 0.6em; color: gold;">
                                                                             @for ($i = 1; $i <= 5; $i++)
-                                                                                <i class="fa{{ $feedback->rating >= $i ? 's' : 'r' }} fa-star" style="color: gold;"></i>
+                                                                                <i class="fa{{ $feedback->rating >= $i ? 's' : 'r' }} fa-star"></i>
                                                                             @endfor
-                                                                        </span>
+                                                                        </div>
+                                                                        </strong>
                                                                     </h5>
-                                                                    <p class="card-text" style="font-size: 0.9em;">Comments: <em>{{ $feedback->comments ?? 'No comments available.' }}</em></p>
+                                                                    <p class="card-text" style="font-size: 0.9em;">"{{ $feedback->comments ?? 'No comments available.' }}"</p>
                                                                     <small class="text-muted" style="font-size: 0.8em;">{{ \Carbon\Carbon::parse($feedback->commentsTime)->format('n/j/Y, g:i:s A') }}</small>
                                                                 </div>
                                                             </div>

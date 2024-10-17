@@ -12,8 +12,8 @@
                 @endif
                 <h2 class="card-title">{{ $menu->menuName }}</h2>
                 <p class="card-text"><strong>Category:</strong> {{ $menu->menuCategory }}</p>
-                <p class="card-text"><strong>Price:</strong> ${{ $menu->price }}</p>
-                <p class="card-text"><strong>Availability:</strong> {{ $menu->availability }}</p>
+                <p class="card-text"><strong>Price:</strong> RM{{ $menu->price }}</p>
+                <p class="card-text"><strong>Quantity in Stock:</strong> {{ $menu->quantityStock }}</p> <!-- Updated field -->
                 <p class="card-text"><strong>Description:</strong> {{ $menu->description }}</p>
                 <a href="{{ route('menus.index') }}" class="btn btn-secondary">Back to List</a>
             </div>

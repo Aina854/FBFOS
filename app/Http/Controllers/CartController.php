@@ -296,8 +296,10 @@ public function showOrderSummary(Request $request, $cartId)
         return redirect()->route('homepageCustomer')->withErrors(['Cart not found.']);
     }
 
-    // Fetch cart items
-    $cartItems = CartItem::where('cartId', $cartId)->get();
+    // Fetch cart items with related Menu information
+    $cartItems = CartItem::with('menu') // Eager load the menu relationship
+        ->where('cartId', $cartId)
+        ->get();
 
     // Calculate the total price
     $total = $cartItems->sum(function ($cartItem) {
@@ -309,6 +311,8 @@ public function showOrderSummary(Request $request, $cartId)
 
     // You can initialize orderId as null if it's not retrieved
     $orderId = null; // or retrieve it from your logic if necessary
+    \Log::info('Cart Items: ', $cartItems->toArray());
+
 
     return view('orders.summary', compact('cart', 'cartItems', 'cartId', 'remarks', 'total', 'orderId'));
 }

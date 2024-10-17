@@ -319,8 +319,65 @@ public function showCustomerDashboard()
     return view('customer.customer-home', compact('menus','cart', 'orderId'));
 }
 
+/**
+ * Show the form for editing the authenticated user's profile.
+ *
+ * @return \Illuminate\View\View
+ */
+public function editProfile()
+{
+    $user = Auth::user(); // Get the authenticated user
+    return view('editProfile', compact('user')); // Pass user data to the view
+}
 
+/**
+ * Handle the profile update request.
+ *
+ * @param \Illuminate\Http\Request $request
+ * @return \Illuminate\Http\RedirectResponse
+ */
+public function updateProfile(Request $request, $id)
+{
+    // Fetch the user by ID
+    $user = User::findOrFail($id); // Ensure the user exists
 
+    // Validate update form data
+    $request->validate([
+        'firstName' => 'required|string',
+        'lastName' => 'required|string',
+        'age' => 'required|integer',
+        'gender' => 'required|string',
+        'email' => 'required|email',
+        'phoneNo' => 'required|string',
+        'address1' => 'required|string',
+        'address2' => 'nullable|string',
+        'postcode' => 'required|string',
+        'city' => 'required|string',
+        'state' => 'required|string',
+        'name' => 'required|string|unique:users,name,' . $user->id,
+        'password' => 'nullable|string|confirmed',
+    ]);
+
+    // Update user details
+    $user->update([
+        'firstName' => $request->firstName,
+        'lastName' => $request->lastName,
+        'age' => $request->age,
+        'gender' => $request->gender,
+        'email' => $request->email,
+        'phoneNo' => $request->phoneNo,
+        'address1' => $request->address1,
+        'address2' => $request->address2,
+        'postcode' => $request->postcode,
+        'city' => $request->city,
+        'state' => $request->state,
+        'name' => $request->name,
+        'password' => $request->password ? Hash::make($request->password) : $user->password,
+    ]);
+
+    // Redirect to the customer homepage with a success message
+    return redirect()->route('homepageCustomer')->with('success', 'Profile updated successfully!');
+}
 
 
 }
