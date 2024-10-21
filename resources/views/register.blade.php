@@ -1,145 +1,79 @@
-@extends('layouts.app')
+@extends('layouts.register')
 
-@section('title', 'Register')
+@section('title', 'Login & Register')
 
 @section('content')
-    <div class="container">
-        <div class="register-form">
-            <h1 class="center-heading">Register</h1>
-            <form action="{{ route('register.submit') }}" method="POST">
-                @csrf
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4" id="auth-card">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h2 class="auth-heading">Welcome</h2>
+                <p class="auth-subheading">Please login or register to continue</p>
+            </div>
+            <!-- Tabs for switching between forms -->
+            <div class="col-12">
+                <ul class="nav nav-tabs justify-content-center" id="authTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login" role="tab">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register" role="tab">Register</a>
+                    </li>
+                </ul>
+            </div>
 
-                <div class="form-row">
-                    <div class="form-column">
-                        <table class="form-table">
-                            <tbody>
-                                <tr>
-                                    <td><label for="name">Name:</label></td>
-                                    <td><input type="text" id="name" name="name" class="form-control" required></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="firstName">First Name:</label></td>
-                                    <td><input type="text" id="firstName" name="firstName" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="lastName">Last Name:</label></td>
-                                    <td><input type="text" id="lastName" name="lastName" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="email">Email:</label></td>
-                                    <td><input type="email" id="email" name="email" class="form-control" required></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="age">Age:</label></td>
-                                    <td><input type="number" id="age" name="age" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="gender">Gender:</label></td>
-                                    <td>
-                                        <select id="gender" name="gender" class="form-control">
-                                            <option value="">Select Gender</option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
-                                        </select>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="phoneNo">Phone Number:</label></td>
-                                    <td><input type="text" id="phoneNo" name="phoneNo" class="form-control"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="form-column">
-                        <table class="form-table">
-                            <tbody>
-                                <tr>
-                                    <td><label for="address1">Address Line 1:</label></td>
-                                    <td><input type="text" id="address1" name="address1" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="address2">Address Line 2:</label></td>
-                                    <td><input type="text" id="address2" name="address2" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="postcode">Postcode:</label></td>
-                                    <td><input type="text" id="postcode" name="postcode" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="city">City:</label></td>
-                                    <td><input type="text" id="city" name="city" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="state">State:</label></td>
-                                    <td><input type="text" id="state" name="state" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="category">Category:</label></td>
-                                    <td>
-                                        <select id="category" name="category" class="form-control" required>
-                                            <option value="Customer">Customer</option>
-                                            <option value="Staff">Staff</option>
-                                            <option value="Admin">Admin</option>
-                                        </select>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="password">Password:</label></td>
-                                    <td class="password-wrapper">
-                                        <input type="password" id="password" name="password" class="form-control" required>
-                                        <i class="fa fa-eye"></i>
-                                        <i class="fa fa-eye-slash"></i>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td><label for="password_confirmation">Confirm Password:</label></td>
-                                    <td><input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="tab-content col-12 mt-4" id="authContent">
+                <!-- Login Form -->
+                <div class="tab-pane fade show active" id="login" role="tabpanel">
+                    <form action="{{ route('login.submit') }}" method="POST">
+                        @csrf
+                        <div class="form-group mb-3">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" name="email" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" name="password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
                 </div>
 
-                <div class="form-buttons">
-                    <button type="submit" class="btn btn-primary">Register</button>
-                    
+                <!-- Register Form -->
+                <div class="tab-pane fade" id="register" role="tabpanel">
+                    <form action="{{ route('register.submit') }}" method="POST">
+                        @csrf
+                        <div class="form-group mb-3">
+                            <label for="register-name">Name</label>
+                            <input type="text" id="register-name" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" name="email" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="register-password">Password</label>
+                            <input type="password" id="register-password" name="password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const passwordField = document.getElementById('password');
-            const eyeIcon = document.querySelector('.fa-eye');
-            const eyeSlashIcon = document.querySelector('.fa-eye-slash');
+<script>
+    // Enable Bootstrap tabs switching with smooth animation
+    var triggerTabList = [].slice.call(document.querySelectorAll('#authTabs a'));
+    triggerTabList.forEach(function (triggerEl) {
+        var tabTrigger = new bootstrap.Tab(triggerEl);
 
-            eyeIcon.addEventListener('click', function () {
-                passwordField.type = 'text';
-                eyeIcon.classList.add('hide');
-                eyeSlashIcon.classList.remove('hide');
-            });
-
-            eyeSlashIcon.addEventListener('click', function () {
-                passwordField.type = 'password';
-                eyeSlashIcon.classList.add('hide');
-                eyeIcon.classList.remove('hide');
-            });
+        triggerEl.addEventListener('click', function (event) {
+            event.preventDefault();
+            tabTrigger.show();
         });
-    </script>
+    });
+</script>
+
 @endsection

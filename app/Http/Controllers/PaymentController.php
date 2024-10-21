@@ -41,7 +41,6 @@ class PaymentController extends Controller
             'id' => Auth::id(), // Assuming this is the user ID
             'OrderStatus' => 'Pending',
             'OrderDate' => Carbon::now(),
-            'remarks' => $request->input('remarks', null),
         ]);
         Log::info('New order created', ['orderId' => $order->orderId]);
 
@@ -63,7 +62,8 @@ class PaymentController extends Controller
             // Stop the transaction and throw an exception
             throw new \Exception("You cannot purchase more than what is in stock for {$menuItem->menuName}. Please adjust your order.");
         }
-
+        // Retrieve the remarks for this specific cart item
+        $remarksForItem = $request->input('remarks.' . $item->cartItemId);
 
             // Create OrderItem
             OrderItem::create([
@@ -72,13 +72,19 @@ class PaymentController extends Controller
                 'quantity' => $item->quantity,
                 'price' => $item->price,
                 'totalPrice' => $item->quantity * $item->price,
+                'remarks' => $remarksForItem, // Store the remarks here
             ]);
             Log::info('Order item created', [
                 'orderId' => $order->orderId,
                 'menuId' => $item->menuId,
                 'quantity' => $item->quantity,
                 'price' => $item->price,
+                'remarks' => $request->input('remarks', null), // Logging remarks
             ]);
+
+            // Deduct stock from the menu item
+            $menuItem->quantityStock -= $item->quantity;
+            $menuItem->save(); // Save the updated stock
 
             /// Use the Ngrok URL for the image
             $ngrokUrl = 'https://399c-210-186-147-9.ngrok-free.app'; // Update to the new Ngrok URL
@@ -187,74 +193,80 @@ public function paymentSuccess($orderId)
     // Fetch the Stripe session using the stored session ID
     $checkoutSession = StripeSession::retrieve($payment->stripe_session_id);
 
-    try{
-
+    try {
         // Fetch the associated PaymentIntent to determine the payment method
         $paymentIntent = \Stripe\PaymentIntent::retrieve($checkoutSession->payment_intent);
-        $paymentMethodUsed = $paymentIntent->payment_method_types[0]; // This will show the actual method used
+        $paymentMethodUsed = $paymentIntent->payment_method_types[0];
 
         // Check the PaymentIntent status
         if ($paymentIntent->status === 'succeeded') {
             
-        // Save the Stripe receipt URL and update the payment status
-        $payment->update([
-            'paymentStatus' => 'Successful',
-            'paymentMethod' => ucfirst($paymentMethodUsed), // Capitalize the payment method for better readability
-            'receiptUrl' => $checkoutSession->receipt_url,
-        ]);
-
-        Log::info('Payment updated', [
-            'paymentId' => $payment->id,
-            'paymentStatus' => $payment->paymentStatus,
-            'receiptUrl' => $payment->receiptUrl,
-            'paymentMethodUsed' => $paymentMethodUsed, // Log the actual payment method used
-        ]);
-
-        // Retrieve the order items associated with the order
-        $orderItems = OrderItem::where('orderId', $orderId)->get();
-
-
-        // Reduce the quantity in the menus table for each purchased item
-        foreach ($orderItems as $orderItem) {
-            $menu = Menu::find($orderItem->menuId); // Assuming you have menuId in OrderItem
-            if ($menu) {
-                // Reduce the stock quantity
-                $menu->quantityStock -= $orderItem->quantity; // Assuming you have quantity in OrderItem
-                $menu->save(); // Save the updated menu item
+            // Check if the payment has already been processed
+            if ($payment->paymentStatus === 'Successful') {
+                // Payment already processed; return the success view without modifying stock
+                return view('payment.success', [
+                    'order' => $order,
+                    'payment' => $payment,
+                    'orderItems' => OrderItem::where('orderId', $orderId)->get(),
+                    'orderId' => $orderId,
+                ]);
             }
+
+            // Save the Stripe receipt URL and update the payment status
+            $payment->update([
+                'paymentStatus' => 'Successful',
+                'paymentMethod' => ucfirst($paymentMethodUsed),
+                'receiptUrl' => $checkoutSession->receipt_url,
+            ]);
+
+            Log::info('Payment updated', [
+                'paymentId' => $payment->id,
+                'paymentStatus' => $payment->paymentStatus,
+                'receiptUrl' => $payment->receiptUrl,
+                'paymentMethodUsed' => $paymentMethodUsed,
+            ]);
+
+            // Retrieve the order items associated with the order
+            $orderItems = OrderItem::where('orderId', $orderId)->get();
+
+            // Reduce the quantity in the menus table for each purchased item
+            //foreach ($orderItems as $orderItem) {
+            //    $menu = Menu::find($orderItem->menuId);
+            //    if ($menu) {
+            //        // Reduce the stock quantity
+            //        $menu->quantityStock -= $orderItem->quantity; // Assuming you have quantity in OrderItem
+            //        $menu->save(); // Save the updated menu item
+            //    }
+            //}
+
+            // Prepare the alert message
+            $alertMessage = "Payment Successful!\n" .
+                            "Order ID: {$order->orderId}\n" .
+                            "Payment Method: {$payment->paymentMethod}\n" .
+                            "Total Amount: MYR " . number_format($payment->paymentAmount, 2);
+
+            // Flash the alert message to the session
+            session()->flash('success', $alertMessage);
+
+            // Redirect to the success page with the order details
+            return view('payment.success', [
+                'order' => $order,
+                'payment' => $payment,
+                'orderItems' => $orderItems,
+                'orderId' => $orderId,
+            ]);
+        } else {
+            Log::info('Payment incomplete or failed', ['status' => $paymentIntent->status]);
+
+            // Handle accordingly, you could redirect or show a failed message
+            session()->flash('alert', 'Payment failed or incomplete. Please try again.');
+
+            return view('payment.cancel');
         }
-
-        // Prepare the alert message
-        $alertMessage = "Payment Successful!\n" .
-                        "Order ID: {$order->orderId}\n" .
-                        "Payment Method: {$payment->paymentMethod}\n" .
-                        "Total Amount: MYR " . number_format($payment->paymentAmount, 2);
-
-        // Flash the alert message to the session
-        session()->flash('success', $alertMessage);
-
-        // Redirect to the success page with the order details
-        return view('payment.success', [
-            'order' => $order,
-            'payment' => $payment,
-            'orderItems' => $orderItems,
-            'orderId' => $orderId,
-        ]);
-    } else {
-        // If payment failed or is incomplete
-        Log::info('Payment incomplete or failed', ['status' => $paymentIntent->status]);
-
-        // Handle accordingly, you could redirect or show a failed message
-        session()->flash('alert', 'Payment failed or incomplete. Please try again.');
-
-        // Return the cancel view
-        return view('payment.cancel');
- }
-
-} catch (\Stripe\Exception\ApiErrorException $e) {
-    Log::error('Stripe API error', ['error' => $e->getMessage()]);
-    return response()->json(['error' => $e->getMessage()], 500);
-}
+    } catch (\Stripe\Exception\ApiErrorException $e) {
+        Log::error('Stripe API error', ['error' => $e->getMessage()]);
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
 }
 
 
@@ -271,11 +283,13 @@ public function paymentCancel(Request $request)
     
     if ($payment) {
         // Check attempts and the last attempt timestamp
-        if ($payment->attempts >= 5 && $payment->last_attempt_at && Carbon::parse($payment->last_attempt_at)->diffInHours(now()) < 24) {
+        if ($payment->attempts >= 3 && $payment->last_attempt_at && Carbon::parse($payment->last_attempt_at)->diffInHours(now()) < 24) {
             // Update both payment and order status to 'Failed'
             $payment->update(['paymentStatus' => 'Failed']);
             $order = Order::find($orderId);
             if ($order) {
+                // Revert quantity stocks if payment has failed after 3 attempts
+                $this->revertQuantityStocks($orderId);
                 $order->update(['OrderStatus' => 'Failed']); // Update order status to Failed
                 Log::info('Order status updated to Failed', ['orderId' => $orderId]);
             } else {
@@ -325,6 +339,23 @@ public function paymentCancel(Request $request)
     ]);
 }
 
+protected function revertQuantityStocks($orderId)
+{
+    // Fetch the order items associated with the order
+    $orderItems = OrderItem::where('orderId', $orderId)->get();
+    
+    foreach ($orderItems as $item) {
+        // Assuming you have a stock column in your menu items
+        $menuItem = Menu::find($item->menuId);
+        if ($menuItem) {
+            $menuItem->increment('quantityStock', $item->quantity); // Revert the stock quantity
+            Log::info('Reverted stock quantity for menu item', ['menuId' => $menuItem->id, 'quantity' => $item->quantity]);
+        } else {
+            Log::error('Menu item not found for stock revert', ['menuId' => $item->menuId]);
+        }
+    }
+}
+
 
 public function payAgain($orderId)
 {
@@ -344,20 +375,26 @@ public function payAgain($orderId)
     // Check if this is the first attempt and set last_attempt_at if not already set
     if (!$payment->last_attempt_at) {
         $payment->last_attempt_at = now(); // Set the first attempt timestamp
+        $payment->save(); // Save changes to update last_attempt_at
     }
 
-    // Check if the user has reached the maximum attempts and if the first attempt was within 24 hours
-    if ($payment->attempts >= 5 && Carbon::parse($payment->last_attempt_at)->diffInHours(now()) < 24) {
-        return redirect()->back()->with('alert', 'You have exceeded the maximum number of payment attempts within 24 hours. Please try again later.');
+    // Check if more than 24 hours have passed since the last attempt
+    if (Carbon::parse($payment->last_attempt_at)->diffInHours(now()) >= 24) {
+        return redirect()->back()->with('alert', 'Payment attempts have expired. Please try again later.');
+    }
+
+    // Check if the user has reached the maximum attempts
+    if ($payment->attempts >= 3) {
+        return redirect()->back()->with('alert', 'You have exceeded the maximum number of payment attempts. Please try again later.');
     }
 
     // If more than 24 hours have passed since the first attempt, reset the attempts and last_attempt_at
-    if (Carbon::parse($payment->last_attempt_at)->diffInHours(now()) >= 24) {
-        $payment->attempts = 0; // Reset the attempts count
-        $payment->last_attempt_at = now(); // Reset the first attempt timestamp
-    }
+    //if (Carbon::parse($payment->last_attempt_at)->diffInHours(now()) >= 24) {
+    //    $payment->attempts = 0; // Reset the attempts count
+    //    $payment->last_attempt_at = now(); // Reset the first attempt timestamp
+    //}
 
-    // If payment attempts are less than 5, proceed
+    // If payment attempts are less than 3, proceed
     $payment->increment('attempts'); // Increment the attempts count
     $payment->save(); // Save the changes
 

@@ -66,7 +66,7 @@
                                 <h6>Order Items:</h6>
                                 <ul>
                                     @foreach($order->orderItems as $item)
-                                        <li>{{ $item->menu->menuName }} x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} for each</li>
+                                        <li>{{ $item->menu->menuName }} x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} for each ({{ $item->remarks }})</li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -149,7 +149,8 @@
                                     <h6>Order Items:</h6>
                                     <ul>
                                         @foreach($order->orderItems as $item)
-                                            <li>{{ $item->menu->menuName }} x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} for each</li>
+                                            <li>{{ $item->menu->menuName }} x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} for each ({{ $item->remarks }})</li>
+                                            
                                         @endforeach
                                     </ul>
                                 </div>

@@ -17,7 +17,7 @@
             <p><strong>Total Amount:</strong> RM {{ $payment->paymentAmount ?? 'N/A' }}</p> <!-- Adjust according to your order attributes -->
             <p><strong>Last Payment Attempt: </strong>{{ $payment->last_attempt_at ?? 'N/A' }}</p> 
             <p><strong>Payment Attempts Made:</strong> {{ $payment->attempts ?? 'N/A' }}</p> <!-- Display attempts made -->
-            <p><strong>Note:</strong> Please complete your payment within 24 hours to avoid any issues. You have a maximum of 5 attempts to complete the payment.</p> <!-- Updated note -->
+            <p><strong>Note:</strong> Please complete your payment within 24 hours to avoid any issues. You have a maximum of 3 attempts to complete the payment.</p> <!-- Updated note -->
 
             <h6>Items:</h6>
             <ul>

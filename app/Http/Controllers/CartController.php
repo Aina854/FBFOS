@@ -306,8 +306,8 @@ public function showOrderSummary(Request $request, $cartId)
         return $cartItem->price * $cartItem->quantity;
     });
 
-    // Get remarks from the request
-    $remarks = $request->query('remarks', 'No remarks provided.');
+    // Decode remarks passed in URL and pass to the view
+    $remarks = json_decode($request->query('remarks'), true);
 
     // You can initialize orderId as null if it's not retrieved
     $orderId = null; // or retrieve it from your logic if necessary

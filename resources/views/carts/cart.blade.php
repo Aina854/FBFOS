@@ -31,7 +31,7 @@
                                         <p class="item-price">Price: RM{{ number_format($cartItem->price, 2) }}</p>
                                         <livewire:cart-quantity :cartItem="$cartItem" :key="$cartItem->cartItemId" />
                                         <span style="font-size: 0.8em; color: darkgrey;">Available Stock: {{ $cartItem->menu->quantityStock }}</span>
-                                        <p class="item-createdAt">Created: {{ $cartItem->createdAt->format('Y-m-d') }}</p>
+                                        <!--<p class="item-createdAt">Created: {{ $cartItem->createdAt->format('Y-m-d') }}</p>-->
                                     </div>
                                     
                                     <form action="{{ route('cart.deleteItem', ['cartItemId' => $cartItem->cartItemId]) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
@@ -47,8 +47,13 @@
                                      class="cart-item-image" 
                                      alt="Image of {{ $cartItem->menu->menuName }}">
 
-                                     
+                                    
                             </div>
+                            <!-- Remarks for each item -->
+    <div class="form-group">
+        <label for="remarks_{{ $cartItem->cartItemId }}">Remarks for {{ $cartItem->menu->menuName }}:</label>
+        <textarea class="form-control" id="remarks_{{ $cartItem->cartItemId }}" name="remarks[{{ $cartItem->cartItemId }}]" rows="2"></textarea>
+    </div> 
                         @endif
                     @endforeach
                 </div>
@@ -63,7 +68,7 @@
                                     <div class="item-description" style="width: 300px; padding: 10px; margin: 0 10px;">
                                         <p class="item-name" style="font-size: 1.1em;">{{ $cartItem->menu->menuName }}</p>
                                         <p class="item-price">Price: RM{{ number_format($cartItem->price, 2) }}</p>
-                                        <p class="item-createdAt">Created: {{ $cartItem->createdAt->format('Y-m-d') }}</p>
+                                        <!--<p class="item-createdAt">Created: {{ $cartItem->createdAt->format('Y-m-d') }}</p>-->
                                         <p class="item-unavailable">This item is not available at the moment.</p>
                                     </div>
 
@@ -92,12 +97,6 @@
                         return confirm('Are you sure you want to delete this item?');
                     }
                 </script>
-
-                <!-- Remarks input -->
-                <div class="form-group">
-                    <label for="remarks">Remarks:</label>
-                    <textarea class="form-control" id="remarks" rows="3"></textarea>
-                </div>
 
                <!-- Side Menu Section -->
 <div class="side-menu-container">
@@ -164,29 +163,31 @@
             <!-- JavaScript for total price and checkout -->
             <script>
                 function checkoutWithRemarks() {
-                    var unavailableItems = document.querySelectorAll('.cart-item.unavailable');
-                    if (unavailableItems.length > 0) {
-                        alert('Please remove unavailable items from your cart before proceeding to payment.');
-                        return;
-                    }
+    var unavailableItems = document.querySelectorAll('.cart-item.unavailable');
+    if (unavailableItems.length > 0) {
+        alert('Please remove unavailable items from your cart before proceeding to payment.');
+        return;
+    }
 
-                    // Get the total price directly from Livewire's total
-                    var totalPrice = parseFloat(document.getElementById('totalPrice').innerText.replace('RM', ''));
-                    if (totalPrice < 2) {
-                        alert('The total amount must be at least RM2.00. Please add more items to your cart.');
-                        return; // Prevent checkout if total is less than MYR 2
-                    }
+    var totalPrice = parseFloat(document.getElementById('totalPrice').innerText.replace('RM', ''));
+    if (totalPrice < 2) {
+        alert('The total amount must be at least RM2.00. Please add more items to your cart.');
+        return;
+    }
 
-                    // Proceed with checkout if the total price is 2 MYR or more
-                    var remarks = document.getElementById('remarks').value;
-                    if (remarks.trim() === '') {
-                        remarks = 'No';
-                    }
+    // Collect individual remarks for each item
+    var remarks = {};
+    document.querySelectorAll('textarea[id^="remarks_"]').forEach(function(textarea) {
+        var cartItemId = textarea.id.split('_')[1];
+        remarks[cartItemId] = textarea.value.trim() === '' ? 'No remarks' : textarea.value;
+    });
 
-                    var cartId = "{{ $cart->cartId }}";
-                    var url = `{{ route('cart.showOrderSummary', ['cartId' => '__CART_ID__']) }}`.replace('__CART_ID__', cartId) + `?remarks=${encodeURIComponent(remarks)}`;
-                    window.location.href = url;
-                }
+    var cartId = "{{ $cart->cartId }}";
+    var url = `{{ route('cart.showOrderSummary', ['cartId' => '__CART_ID__']) }}`.replace('__CART_ID__', cartId) + `?remarks=${encodeURIComponent(JSON.stringify(remarks))}`;
+    window.location.href = url;
+}
+
+
 
                 window.addEventListener('livewire:load', function () {
                 Livewire.on('quantityUpdated', function (data) {

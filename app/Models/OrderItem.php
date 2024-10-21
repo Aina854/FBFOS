@@ -28,6 +28,7 @@ class OrderItem extends Model
         'quantity',
         'price',
         'totalPrice',
+        'remarks',
     ];
 
     // Define the relationship with the order (belongsTo relationship)

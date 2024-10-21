@@ -47,6 +47,7 @@
                             <span class="badge bg-warning">{{ $order->OrderStatus }}</span>
                         </div>
                         <div class="card-body">
+                            <h6 class="customer-name">Customer Name: {{ $order->user->firstName }}</h6>
                             <h6>Total Price: RM{{ number_format($order->payment->paymentAmount, 2) }}</h6>
                             <h6>
                             Payment Status: 
@@ -76,9 +77,11 @@
                                 <div class="collapse" id="order-items-{{ $order->orderId }}">
                                     <ul class="list-group mt-2">
                                         @foreach($order->orderItems as $item)
-                                            <li class="list-group-item">
-                                                {{ $item->menu->menuName }} - Quantity: x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} each
-                                            </li>
+                                        <li class="list-group-item">
+                                            {{ $item->menu->menuName }} - Quantity: x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} each 
+                                            <span class="remarks">({{ $item->remarks }})</span>
+                                        </li>
+
                                         @endforeach
                                     </ul>
                                 </div>
@@ -184,29 +187,36 @@
     });
 
     function printOrder(orderId) {
-        const orderCard = document.querySelector(`.order-card[data-order-id="${orderId}"]`);
-        const orderItems = Array.from(orderCard.querySelectorAll('.list-group-item')).map(item => {
-            const itemText = item.textContent.split(' - '); // Split item details
-            return `${itemText[0]} - Quantity: ${itemText[1].split(': ')[1]}`; // Format for print
-        });
+    const orderCard = document.querySelector(`.order-card[data-order-id="${orderId}"]`);
+    const orderItems = Array.from(orderCard.querySelectorAll('.list-group-item')).map(item => {
+    const itemText = item.textContent.split(' - '); // Split item details
+    const quantity = itemText[1].split(': ')[1]; // Extract quantity
+    const price = itemText[2].trim(); // Extract price details
+    const remarks = item.querySelector('.remarks') ? item.querySelector('.remarks').textContent.trim() : 'No remarks'; // Adjust this line
+    return `${itemText[0]} - Quantity: ${quantity}` +
+           `<br><strong>*${remarks}</strong>`; // Format remarks in bold
+});
 
-        const printContents = `
-            <h2>Order ID: #${orderId}</h2>
-            <h3>Order Items:</h3>
-            <ul>
-                ${orderItems.map(item => `<li>${item}</li>`).join('')}
-            </ul>
-        `;
 
-        const win = window.open('', '', 'height=400,width=600');
-        win.document.write('<html><head><title>Print Order</title>');
-        win.document.write('<style>body { font-family: Arial, sans-serif; }</style>'); // Optional styling for better readability
-        win.document.write('</head><body>');
-        win.document.write(printContents);
-        win.document.write('</body></html>');
-        win.document.close();
-        win.print();
-    }
+    const printContents = `
+        <h2>Order ID: #${orderId}</h2>
+        <h3>Order Items:</h3>
+        <ul>
+            ${orderItems.map(item => `<li>${item}</li>`).join('')}
+        </ul>
+    `;
+
+    const win = window.open('', '', 'height=400,width=600');
+    win.document.write('<html><head><title>Print Order</title>');
+    win.document.write('<style>body { font-family: Arial, sans-serif; }</style>'); // Optional styling for better readability
+    win.document.write('</head><body>');
+    win.document.write(printContents);
+    win.document.write('</body></html>');
+    win.document.close();
+    win.print();
+}
+
+
 
     // Auto-refresh every 30 minutes (1800000 ms)
     setInterval(() => {

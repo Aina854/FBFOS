@@ -21,7 +21,7 @@ class OrderController extends Controller
     $user = auth()->user();
 
     // Determine which tab to display
-    $tab = $request->input('tab', 'history'); // Default to 'pending' if no tab specified
+    $tab = $request->input('tab', 'current'); // Default to 'pending' if no tab specified
 
     // Initialize order variables
     $currentOrders = collect(); // For current orders

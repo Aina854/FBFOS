@@ -5,11 +5,11 @@
 @section('content')
     <!-- Order Summary Section -->
     <div class="container mt-4">
-    @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
 
         <div class="order-summary">
             <h2 class="text-center">Order Summary</h2>
@@ -22,6 +22,7 @@
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Total</th>
+                            <th>Remarks</th> <!-- Add a new column for Remarks -->
                         </tr>
                     </thead>
                     <tbody>
@@ -42,16 +43,14 @@
                                 <input type="hidden" class="quantity-stocks" value="{{ $cartItem->menu->quantityStock }}">
                             </td>
                             <td>RM{{ number_format($cartItem->totalPrice, 2) }}</td>
+                            <td>
+                                <!-- Remarks input field -->
+                                <input type="text" name="remarks[{{ $cartItem->cartItemId }}]" class="form-control" value="{{ $remarks[$cartItem->cartItemId] }}" readonly>
+                            </td>
                         </tr>
-
                         @endforeach
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Remarks -->
-            <div class="remarks">
-                <strong>Remarks:</strong> {{ $remarks }}
             </div>
 
             <!-- Total Price -->
@@ -65,7 +64,9 @@
                 <form id="proceedToPaymentForm" action="{{ route('cart.proceedToPayment', ['cartId' => $cartId]) }}" method="POST" class="d-inline">
                     @csrf
                     <input type="hidden" name="total" value="{{ $total }}">
-                    <input type="hidden" name="remarks" value="{{ $remarks }}">
+                    @foreach($remarks as $cartItemId => $remark)
+                        <input type="hidden" name="remarks[{{ $cartItemId }}]" value="{{ $remark }}">
+                    @endforeach
                     <button type="submit" class="btn btn-proceedtp">Proceed to Payment</button>
                 </form>
             </div>

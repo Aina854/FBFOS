@@ -26,6 +26,10 @@
             <!-- Preparing Orders Section -->
             <div class="mb-4">
                 <h2>Preparing Orders</h2>
+                <!-- Search Bar -->
+            <div class="mb-3">
+                <input type="text" id="search" class="form-control" placeholder="Search by Order ID or Customer Name" onkeyup="searchOrders()">
+            </div>
 
                 @if($preparingOrders->isEmpty())
                 <div class="alert alert-info">
@@ -40,6 +44,7 @@
                                     <span class="badge bg-info">{{ $order->OrderStatus }}</span>
                                 </div>
                                 <div class="card-body">
+                                <h6 class="customer-name">Customer Name: {{ $order->user->firstName }}</h6>
                                     <h6>Total Price: RM{{ number_format($order->payment->paymentAmount, 2) }}</h6>
                                     <h6>
                                     Payment Status: 
@@ -70,6 +75,7 @@
                                                 @foreach($order->orderItems as $item)
                                                     <li class="list-group-item">
                                                         {{ $item->menu->menuName }} - Quantity: x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} each
+                                                        <span class="remarks">({{ $item->remarks }})</span>
                                                     </li>
                                                 @endforeach
                                             </ul>
@@ -118,6 +124,7 @@
                                     <span class="badge bg-success">{{ $order->OrderStatus }}</span>
                                 </div>
                                 <div class="card-body">
+                                <h6 class="customer-name">Customer Name: {{ $order->user->firstName }}</h6>
                                     <h6>Total Price: RM{{ number_format($order->payment->paymentAmount, 2) }}</h6>
                                     <h6>
                                     Payment Status: 
@@ -148,6 +155,7 @@
                                                 @foreach($order->orderItems as $item)
                                                     <li class="list-group-item">
                                                         {{ $item->menu->menuName }} - Quantity: x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} each
+                                                        <span class="remarks">({{ $item->remarks }})</span>
                                                     </li>
                                                 @endforeach
                                             </ul>
@@ -180,4 +188,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function searchOrders() {
+        const input = document.getElementById('search').value.toLowerCase();
+        const orderCards = document.querySelectorAll('.order-card');
+
+        orderCards.forEach(card => {
+            const orderId = card.getAttribute('data-order-id').toLowerCase();
+            const customerName = card.querySelector('.customer-name') ? card.querySelector('.customer-name').textContent.toLowerCase() : '';
+
+            if (orderId.includes(input) || customerName.includes(input)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
 @endsection

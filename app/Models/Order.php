@@ -26,7 +26,6 @@ class Order extends Model
         'id', // Foreign key to users table
         'OrderStatus',
         'OrderDate',
-        'remarks',
         'staffFirstName',
         'staffLastName',
         'feedbackSubmitted',
