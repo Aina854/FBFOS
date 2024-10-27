@@ -1,0 +1,40 @@
+/* Edit Profile Styles */
+
+.edit-form {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px; /* Set a max width for the form */
+    margin: 0 auto; /* Center the form */
+}
+
+.center-heading {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.user-info, .address-info {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+
+.user-info h4, .address-info h4 {
+    margin-bottom: 15px;
+    color: #495057;
+}
+
+.form-buttons {
+    margin-top: 20px;
+}
+
+/*body {
+/*    background-image: url('/images/stafflogin.jpg'); /* Correct URL */
+/*    background-size: cover; /* Optional: makes the background cover the entire body */
+/*    background-repeat: no-repeat; /* Optional: prevents the image from repeating */
+/*    background-position: center; /* Optional: centers the background image */
+/*}

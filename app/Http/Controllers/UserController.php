@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function showLoginForm()
     {
-        return view('login');
+        return view('register');
     }
 
     /**
@@ -34,45 +34,52 @@ class UserController extends Controller
 
 
      public function login(Request $request)
-     {
-         $request->validate([
-             'email' => 'required|email',
-             'password' => 'required',
-         ]);
-     
-         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-             $user = Auth::user();
-             Session::put('role', strtolower($user->category));
-     
-             Log::info('User logged in with ID: ' . $user->id . ' and category: ' . $user->category);
-     
-             // Only create cart if user is a customer and no existing cart is found
-             if (strtolower($user->category) === 'customer') {
-                 $existingCart = Cart::where('user_id', $user->id)->first();
-                 if (!$existingCart) {
-                     Log::info('Creating cart for user ID: ' . $user->id);
-                     $response = app(CartController::class)->createCartForUser($user->id);
-                     // Optionally handle the response if needed
-                 } else {
-                     Log::info('Cart already exists for user ID: ' . $user->id, ['cartId' => $existingCart->cartId]);
-                     Session::put('cartId', $existingCart->cartId); // Store existing cart ID in session
-                 }
-             }
-     
-             switch (strtolower($user->category)) {
-                 case 'customer':
-                     return redirect()->route('homepageCustomer');
-                 case 'staff':
-                     return redirect()->route('homepageStaff');
-                 case 'admin':
-                     return redirect()->route('homepageAdmin');
-                 default:
-                     return redirect()->route('login')->withErrors(['Invalid category']);
-             }
-         } else {
-             return redirect()->route('login')->withErrors(['Invalid credentials']);
-         }
-     }
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    // Check if the email exists in the database
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return redirect()->route('login')->withErrors(['email' => 'Your email is not registered. Please register first.']);
+    }
+
+    // Attempt to authenticate the user
+    if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        Session::put('role', strtolower($user->category));
+
+        Log::info('User logged in with ID: ' . $user->id . ' and category: ' . $user->category);
+
+        // Only create cart if user is a customer and no existing cart is found
+        if (strtolower($user->category) === 'customer') {
+            $existingCart = Cart::where('user_id', $user->id)->first();
+            if (!$existingCart) {
+                Log::info('Creating cart for user ID: ' . $user->id);
+                app(CartController::class)->createCartForUser($user->id);
+            } else {
+                Log::info('Cart already exists for user ID: ' . $user->id, ['cartId' => $existingCart->cartId]);
+                Session::put('cartId', $existingCart->cartId); // Store existing cart ID in session
+            }
+        }
+
+        switch (strtolower($user->category)) {
+            case 'customer':
+                return redirect()->route('homepageCustomer');
+            case 'staff':
+                return redirect()->route('homepageStaff');
+            case 'admin':
+                return redirect()->route('homepageAdmin');
+            default:
+                return redirect()->route('login')->withErrors(['Invalid category']);
+        }
+    } else {
+        return redirect()->route('login')->withErrors(['password' => 'Invalid credentials.']);
+    }
+}
+
      
 
     /**
@@ -108,35 +115,20 @@ class UserController extends Controller
 {
     // Validate registration form data
     $request->validate([
-        'firstName' => 'required|string',
-        'lastName' => 'required|string',
-        'age' => 'required|integer',
-        'gender' => 'required|string',
         'email' => 'required|email',
-        'phoneNo' => 'required|string',
-        'address1' => 'required|string',
-        'address2' => 'nullable|string',
-        'postcode' => 'required|string',
-        'city' => 'required|string',
-        'state' => 'required|string',
         'name' => 'required|string|unique:users,name',
-        'password' => 'required|string|confirmed',
+        'password' => 'required|string',
         'category' => 'required|string'
     ]);
 
+    // Check if the email already exists in the database
+    if (User::where('email', $request->email)->exists()) {
+        return redirect()->back()->withErrors(['email' => 'Your email already has an account. Please log in.']);
+    }
+
     // Create a new user
     $user = new User([
-        'firstName' => $request->firstName,
-        'lastName' => $request->lastName,
-        'age' => $request->age,
-        'gender' => $request->gender,
         'email' => $request->email,
-        'phoneNo' => $request->phoneNo,
-        'address1' => $request->address1,
-        'address2' => $request->address2,
-        'postcode' => $request->postcode,
-        'city' => $request->city,
-        'state' => $request->state,
         'name' => $request->name,
         'password' => Hash::make($request->password),
         'category' => $request->category,
@@ -149,15 +141,15 @@ class UserController extends Controller
     if (strtolower($user->category) === 'customer') {
         // Call the CartController's method to create a cart
         app(CartController::class)->createCartForUser($user->id);
-        
     }
-    // Check if cartId is set
+
+    // Log the cart ID after creation (optional)
     $cartId = Session::get('cartId');
     Log::info('Cart ID after creation: ', ['cartId' => $cartId]);
 
-
     return redirect()->route('login')->with('success', 'Successfully registered!');
 }
+
 
     
     

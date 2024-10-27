@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('css/cust/payment.css') }}">
     <link rel="stylesheet" href="{{ asset('css/cust/invoice.css') }}">
     <link rel="stylesheet" href="{{ asset('css/cust/feedback.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/edit-profile.css') }}">
 
     <!-- Include SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
