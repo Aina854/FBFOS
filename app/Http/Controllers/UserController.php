@@ -150,8 +150,55 @@ class UserController extends Controller
     return redirect()->route('login')->with('success', 'Successfully registered!');
 }
 
+public function changePassword(Request $request, $id)
+    {
+        // Log when the method is called
+        Log::info('changePassword method called for user ID: ' . $id);
+        \Log::info('Change Password Form Submitted', $request->all()); // Check the request data
 
-    
+        $user = User::findOrFail($id);
+
+        // Validate passwords
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+        // Log success message
+        Log::info('Password successfully updated for user ID: ' . $id);
+
+        // Set a success message
+        session()->flash('success', 'Password updated successfully.');
+
+        return redirect()->route('editProfile', $id);
+    }
+
+    public function changePasswordStaff(Request $request, $id)
+    {
+        // Log when the method is called
+        Log::info('changePasswordStaff method called for user ID: ' . $id);
+        \Log::info('Change Password Staff Form Submitted', $request->all()); // Check the request data
+
+        $user = User::findOrFail($id);
+
+        // Validate passwords
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+        // Log success message
+        Log::info('Password successfully updated for user ID: ' . $id);
+
+        // Set a success message
+        session()->flash('success', 'Password updated successfully.');
+
+        return redirect()->route('editStaff', $id);
+    }
     
     /**
      * Handle the user update request.
@@ -162,6 +209,8 @@ class UserController extends Controller
      */
     public function updateUser(Request $request, $id)
     {
+
+        Log::info('Update user method hit');
         // Validate update form data
         $request->validate([
             'firstName' => 'required|string',
@@ -201,7 +250,9 @@ class UserController extends Controller
             'category' => $request->category,
         ]);
 
-        return redirect()->back()->with('success', 'Profile updated successfully!');
+        Log::info('User updated: ' . $user->id);
+
+        return redirect()->route('editProfile', $user->id)->with('success', 'Profile updated successfully!');
     }
 
     /**
@@ -282,17 +333,17 @@ public function showCustomerDashboard()
         });
 
         // Log the feedbacks for debugging
-        Log::info('Feedbacks for Menu ID ' . $menu->menuId . ':', ['feedbacks' => $feedbacks]);
+        //Log::info('Feedbacks for Menu ID ' . $menu->menuId . ':', ['feedbacks' => $feedbacks]);
 
         // Calculate the average rating and reviews count
         $averageRating = $feedbacks->avg('rating'); // Calculate average rating
         $reviewsCount = $feedbacks->count(); // Count reviews
 
         // Log the calculated average rating and reviews count
-        Log::info('Average Rating and Review Count for Menu ID ' . $menu->menuId . ':', [
-            'averageRating' => $averageRating,
-            'reviewsCount' => $reviewsCount,
-        ]);
+        //Log::info('Average Rating and Review Count for Menu ID ' . $menu->menuId . ':', [
+        //    'averageRating' => $averageRating,
+        //   'reviewsCount' => $reviewsCount,
+        //]);
 
         // Assign the calculated values to the menu item
         $menu->averageRating = $averageRating ? round($averageRating, 1) : 'No rating';
@@ -322,6 +373,12 @@ public function editProfile()
     return view('editProfile', compact('user')); // Pass user data to the view
 }
 
+public function editStaff()
+{
+    $user = Auth::user(); // Get the authenticated user
+    return view('editStaff', compact('user')); // Pass user data to the view
+}
+
 /**
  * Handle the profile update request.
  *
@@ -330,6 +387,7 @@ public function editProfile()
  */
 public function updateProfile(Request $request, $id)
 {
+    Log::info('Update user method hit');
     // Fetch the user by ID
     $user = User::findOrFail($id); // Ensure the user exists
 
@@ -368,7 +426,54 @@ public function updateProfile(Request $request, $id)
     ]);
 
     // Redirect to the customer homepage with a success message
-    return redirect()->route('homepageCustomer')->with('success', 'Profile updated successfully!');
+    return redirect()->route('editProfile', $user->id)->with('success', 'Profile updated successfully!');
+}
+
+public function updateProfileStaff(Request $request, $id)
+{
+    Log::info('Update staff method hit');
+    \Log::info('Update Staff Form Submitted', $request->all()); // Check the request data
+    // Fetch the user by ID
+    $user = User::findOrFail($id); // Ensure the user exists
+
+    // Validate update form data
+    $request->validate([
+        'firstName' => 'required|string',
+        'lastName' => 'required|string',
+        'age' => 'required|integer',
+        'gender' => 'required|string',
+        'email' => 'required|email',
+        'phoneNo' => 'required|string',
+        'address1' => 'required|string',
+        'address2' => 'nullable|string',
+        'postcode' => 'required|string',
+        'city' => 'required|string',
+        'state' => 'required|string',
+        'name' => 'required|string|unique:users,name,' . $user->id,
+        'password' => 'nullable|string|confirmed',
+    ]);
+
+    Log::info('Validation staff method hit');
+    // Update user details
+    $user->update([
+        'firstName' => $request->firstName,
+        'lastName' => $request->lastName,
+        'age' => $request->age,
+        'gender' => $request->gender,
+        'email' => $request->email,
+        'phoneNo' => $request->phoneNo,
+        'address1' => $request->address1,
+        'address2' => $request->address2,
+        'postcode' => $request->postcode,
+        'city' => $request->city,
+        'state' => $request->state,
+        'name' => $request->name,
+        'password' => $request->password ? Hash::make($request->password) : $user->password,
+    ]);
+    Log::info('Update staff method update');
+
+    // Redirect to the customer homepage with a success message
+    return redirect()->route('editStaff', $user->id)->with('success', 'Profile updated successfully!');
 }
 
 

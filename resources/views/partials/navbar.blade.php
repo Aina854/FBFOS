@@ -25,7 +25,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                     @if(Auth::check())
-                        <a class="dropdown-item" href="{{ route('editProfile', ['id' => Auth::user()->id]) }}">
+                        <a class="dropdown-item" href="{{ route('editStaff', ['id' => Auth::user()->id]) }}">
                             <i class="fas fa-pencil-alt"></i> Edit Profile
                         </a>
                     @else
@@ -33,14 +33,16 @@
                             <i class="fas fa-pencil-alt"></i> Edit Profile
                         </a>
                     @endif
-
-
                     
 
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="return confirm('Are you sure you want to logout?');">
+                    <div class="dropdown-divider"></div>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
+
                     </div>
                 </li>
             </ul>

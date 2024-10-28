@@ -24,12 +24,17 @@ class CurrentOrders extends Component
 {
     \Log::info('Polling orders...');
 
-    // Load all orders with statuses: Pending, Preparing, Ready for Pickup, and Completed
+    // Get the authenticated user
+    $user = auth()->user();
+
+    // Load all orders for the current user with statuses: Pending, Preparing, Ready for Pickup, and Completed
     $this->orders = Order::with('payment', 'orderItems.menu')
+        ->where('id', $user->id) // Filter by the user ID
         ->whereIn('OrderStatus', ['Pending', 'Preparing', 'Ready for Pickup', 'Completed'])
         ->whereHas('payment', function ($query) {
             $query->where('paymentStatus', 'Successful');
         })
+        ->orderBy('created_at', 'desc') // Sort orders by created_at in descending order
         ->get();
 
     // Filter only the current (not completed) orders to display in the current tab
@@ -42,6 +47,7 @@ class CurrentOrders extends Component
     // Check for status changes, including orders moving to "Completed"
     $this->detectStatusChange();
 }
+
 
 
 public function detectStatusChange()

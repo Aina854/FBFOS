@@ -36,6 +36,7 @@ class OrderController extends Controller
             ->whereHas('payment', function($query) {
                 $query->where('paymentStatus', 'Successful'); // Ensure successful payment status
             })
+            ->orderBy('created_at', 'desc') // Sort orders by created_at in descending order
             ->get();
     }
 
@@ -47,6 +48,7 @@ class OrderController extends Controller
             ->whereHas('payment', function($query) {
                 $query->where('paymentStatus', 'Pending'); // Ensure pending payment status
             })
+            ->orderBy('created_at', 'desc') // Sort orders by created_at in descending order
             ->get();
     }
 
@@ -55,6 +57,7 @@ class OrderController extends Controller
         $pastOrders = Order::with(['orderItems.menu', 'payment'])
             ->where('id', $user->id) // Use user_id for filtering
             ->whereIn('OrderStatus', ['Completed', 'Failed']) // Assuming you want only completed past orders
+            ->orderBy('created_at', 'desc') // Sort orders by created_at in descending order
             ->get();
     }
 
@@ -107,6 +110,7 @@ public function incomingOrders()
         ->whereHas('payment', function ($query) {
             $query->where('PaymentStatus', 'Successful'); // Only orders with successful payments
         })
+        //->orderBy('created_at', 'desc') // Sort orders by created_at in descending order
         ->get();
 
     // Get sidebar data
@@ -118,6 +122,7 @@ public function incomingOrders()
         ->whereHas('payment', function ($query) {
             $query->where('PaymentStatus', 'Successful'); // Filter by successful payment
         })
+        //->orderBy('created_at', 'desc') // Sort orders by created_at in descending order
         ->get()
         ->map(function ($order) {
             // Calculate order status percentage
@@ -215,6 +220,7 @@ public function incomingOrders()
     // Retrieve only orders with status Preparing or Ready for Pickup
     $orders = Order::with(['payment', 'orderItems.menu'])
         ->whereIn('OrderStatus', ['Preparing', 'Ready for Pickup']) // Filter for specific statuses
+        //->orderBy('created_at', 'desc') // Sort orders by created_at in descending order
         ->get()
         ->map(function ($order) {
             // Calculate order status percentage

@@ -24,6 +24,8 @@ Route::prefix('auth')->group(function () {
     Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [UserController::class, 'insertUser'])->name('register.submit');
 });
+Route::post('/profile/{id}/change-password', [UserController::class, 'changePassword'])->name('profile.changePassword');
+Route::post('/profile/{id}/change-password-staff', [UserController::class, 'changePasswordStaff'])->name('profile.changePasswordStaff');
 
 // User Management (Admin) Routes
 Route::middleware('auth')->group(function () {
@@ -32,7 +34,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}', [UserController::class, 'updateUser'])->name('user.update');
         Route::delete('/{id}', [UserController::class, 'deleteUser'])->name('user.delete');
         Route::get('/profile/edit/{id}', [UserController::class, 'editProfile'])->name('editProfile');
+        Route::get('/staff/edit/{id}', [UserController::class, 'editStaff'])->name('editStaff');
         Route::post('/profile/update/{id}', [UserController::class, 'updateProfile'])->name('profile.update');
+        Route::post('/staff/update/{id}', [UserController::class, 'updateProfileStaff'])->name('profile.update.staff');
 
     });
 });

@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('css/slider.css') }}">
     <link rel="stylesheet" href="{{ asset('css/feedback.css') }}">
     <link rel="stylesheet" href="{{ asset('css/cust/order.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/edit-profile.css') }}">
 </head>
 <body>
     @include('partials.navbar')

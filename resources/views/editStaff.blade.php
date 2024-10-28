@@ -1,4 +1,4 @@
-@extends('layouts.customer')
+@extends('layouts.staff')
 
 @section('title', 'Edit Profile')
 
@@ -31,7 +31,7 @@
         <div class="tab-content mt-3" id="profileTabContent">
             <!-- User Info Tab -->
             <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
-                <form id="edit-profile-form" action="{{ route('profile.update', $user->id) }}" method="POST">
+                <form id="edit-profile-form" action="{{ route('profile.update.staff', $user->id) }}" method="POST">
                     @csrf
 
                     <div class="row">
@@ -64,8 +64,7 @@
                                         <option value="Male" {{ $user->gender == 'Male' ? 'selected' : '' }}>Male</option>
                                         <option value="Female" {{ $user->gender == 'Female' ? 'selected' : '' }}>Female</option>
                                     </select>
-                                </div>
-                                
+                                </div>                  
                             </div>
                         </div>
 
@@ -114,8 +113,8 @@
                                     </select>
                                 </div>
 
-                                <!-- Hidden input to set category as 'customer' -->
-                                <input type="hidden" name="category" value="Customer">
+                                <!-- Hidden input to set category as 'Staff' -->
+                                <input type="hidden" name="category" value="Staff">
                                 
                             </div>
                         </div>
@@ -129,7 +128,7 @@
 
             <!-- Security Tab -->
             <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
-                <form id="change-password-form" action="{{ route('profile.changePassword', $user->id) }}#security" method="POST">
+                <form id="change-password-form" action="{{ route('profile.changePasswordStaff', $user->id) }}#security" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="password">New Password:</label>

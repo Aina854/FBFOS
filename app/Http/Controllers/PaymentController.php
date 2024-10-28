@@ -378,21 +378,40 @@ public function payAgain($orderId)
         $payment->save(); // Save changes to update last_attempt_at
     }
 
-    // Check if more than 24 hours have passed since the last attempt
+    //Check if more than 24 hours have passed since the last attempt
     if (Carbon::parse($payment->last_attempt_at)->diffInHours(now()) >= 24) {
-        return redirect()->back()->with('alert', 'Payment attempts have expired. Please try again later.');
+       // Update both payment and order status to 'Failed'
+       $payment->update(['paymentStatus' => 'Failed']);
+       $order = Order::find($orderId);
+       if ($order) {
+           // Revert quantity stocks if payment has failed after 3 attempts
+           $this->revertQuantityStocks($orderId);
+           $order->update(['OrderStatus' => 'Failed']); // Update order status to Failed
+           Log::info('Order status updated to Failed', ['orderId' => $orderId]);
+       }
+       return redirect()->route('homepageCustomer')->with('alert', 'You have exceeded the maximum number of payment attempts within 24 hours. Please consider making a new purchase when you are ready.');
     }
+    
+
+    // Check if more than 24 hours have passed since the last attempt
+   //if ($payment->attempts >= 3 && $payment->last_attempt_at && Carbon::parse($payment->last_attempt_at)->diffInHours(now()) < 24) {
+   //    // Update both payment and order status to 'Failed'
+   //    $payment->update(['paymentStatus' => 'Failed']);
+   //    $order = Order::find($orderId);
+   //    if ($order) {
+   //        // Revert quantity stocks if payment has failed after 3 attempts
+   //        $this->revertQuantityStocks($orderId);
+   //        $order->update(['OrderStatus' => 'Failed']); // Update order status to Failed
+   //        Log::info('Order status updated to Failed', ['orderId' => $orderId]);
+   //    }
+   //    return redirect()->back()->with('alert', 'You have exceeded the maximum number of payment attempts within 24 hours. Please consider making a new purchase when you are ready.');
+   //}
 
     // Check if the user has reached the maximum attempts
     if ($payment->attempts >= 3) {
         return redirect()->back()->with('alert', 'You have exceeded the maximum number of payment attempts. Please try again later.');
     }
 
-    // If more than 24 hours have passed since the first attempt, reset the attempts and last_attempt_at
-    //if (Carbon::parse($payment->last_attempt_at)->diffInHours(now()) >= 24) {
-    //    $payment->attempts = 0; // Reset the attempts count
-    //    $payment->last_attempt_at = now(); // Reset the first attempt timestamp
-    //}
 
     // If payment attempts are less than 3, proceed
     $payment->increment('attempts'); // Increment the attempts count
