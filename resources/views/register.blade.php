@@ -71,7 +71,10 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="register-password">Password</label>
-                            <input type="password" id="register-password" name="password" class="form-control" required>
+                            <input type="password" id="register-password" name="password" class="form-control" required oninput="validatePassword()">
+                            <small id="password-message" class="text-danger" style="display: none;">
+                                Password must be at least 8 characters, contain a number, a special character, and a letter.
+                            </small>
                         </div>
 
                         <!-- Hidden input to set category as 'customer' -->
@@ -85,6 +88,31 @@
 </div>
 
 <script>
+    function validatePassword() {
+    const passwordInput = document.getElementById('register-password');
+    const passwordMessage = document.getElementById('password-message');
+    const password = passwordInput.value;
+    
+    // Define the criteria for a valid password
+    const minLength = 8;
+    const hasNumber = /\d/;
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+    const hasLetter = /[a-zA-Z]/;
+
+    // Check if the password meets the criteria
+    if (
+        password.length >= minLength &&
+        hasNumber.test(password) &&
+        hasSpecialChar.test(password) &&
+        hasLetter.test(password)
+    ) {
+        passwordMessage.style.display = 'none'; // Hide the message if criteria met
+    } else {
+        passwordMessage.style.display = 'block'; // Show the message if criteria not met
+    }
+}
+
+
     // Set active tab in session storage
     function setActiveTab(tab) {
         // Save the active tab in session storage

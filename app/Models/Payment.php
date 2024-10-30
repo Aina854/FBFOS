@@ -21,13 +21,8 @@ class Payment extends Model
         'orderId', // Foreign key to the orders table
         'paymentAmount',
         'paymentDate',
-        'receiptImage',
         'paymentStatus',
-        'responseDate',
-        'comments',
         'paymentMethod',
-        'staffFirstName',
-        'staffLastName',
         'stripe_session_id',
         'attempts',
         'last_attempt_at',

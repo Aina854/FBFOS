@@ -315,6 +315,17 @@ public function showStaffDashboard()
     return view('staff/staff-home');
 }
 
+public function showAdminDashboard()
+{
+    // Check if the user is logged in and has the staff role
+    if (Session::get('role') !== 'admin') {
+        return redirect()->route('login')->withErrors(['You do not have access to this page']);
+    }
+
+    // Return the staff dashboard view
+    return view('admin/admin-home');
+}
+
 public function showCustomerDashboard()
 {
     // Check if the user is logged in and has the customer role
@@ -475,6 +486,110 @@ public function updateProfileStaff(Request $request, $id)
     // Redirect to the customer homepage with a success message
     return redirect()->route('editStaff', $user->id)->with('success', 'Profile updated successfully!');
 }
+
+
+public function getStaffList()
+{
+    // Retrieve all users with the category of "staff"
+    $staffMembers = User::where('category', 'staff')->get();
+
+    // Pass the list of staff members to the admin view
+    return view('admin.staff-list', ['staffMembers' => $staffMembers]);
+}
+
+
+public function createstaff()
+{
+    return view('admin.create'); // Make sure this view exists
+}
+
+public function storestaff(Request $request)
+{
+    // Validate form data
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'phoneNo' => 'required|string|max:15',
+        'password' => 'required|string|min:8|confirmed', // Password confirmation field
+    ]);
+
+    // Create the new staff
+    $staff = new User();
+    $staff->name = $request->name;
+    $staff->email = $request->email;
+    $staff->phoneNo = $request->phoneNo;
+    $staff->password = bcrypt($request->password);
+    $staff->category = 'Staff'; // Assuming 'category' is used to assign roles
+
+    $staff->save();
+
+    return redirect()->route('admin.staffList')->with('success', 'New staff member added successfully');
+}
+
+public function admineditStaff($id)
+{
+    $staff = User::findOrFail($id); // Retrieve the staff member by their ID
+    return view('admin.editStaff', compact('staff')); // Pass the staff data to the view
+}
+
+public function updateStaff(Request $request, $id)
+{
+    // Validate the input data
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $id,
+        'phoneNo' => 'required|string|max:15',
+        // Add validation for other fields if necessary
+    ]);
+
+    // Find the staff member by ID
+    $staff = User::findOrFail($id);
+
+    // Update the staff member's information
+    $staff->name = $request->input('name');
+    $staff->email = $request->input('email');
+    $staff->phoneNo = $request->input('phoneNo');
+    // Add more fields to update if needed
+
+    // Save the updated staff member data
+    $staff->save();
+
+    // Redirect back to the staff list with a success message
+    return redirect()->route('admin.staffList')->with('success', 'Staff member updated successfully.');
+}
+
+public function deleteStaff($id)
+{
+    // Find the staff member by ID
+    $staff = User::findOrFail($id);
+
+    // Delete the staff member
+    $staff->delete();
+
+    // Redirect back to the staff list with a success message
+    return redirect()->route('admin.staffList')->with('success', 'Staff member deleted successfully.');
+}
+
+
+public function customerList()
+{
+    // Retrieve all users with the category of "staff"
+    $customers = User::where('category', 'customer')->get();
+
+    // Pass the list of staff members to the admin view
+    return view('admin.customerList', compact('customers'));
+    
+}
+
+public function deleteCustomer($id)
+{
+    $customer = User::findOrFail($id);
+    $customer->delete();
+
+    // Set a success message in the session
+    return redirect()->route('admin.customerList')->with('success', 'Customer deleted successfully.');
+}
+
 
 
 }

@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/homepage-staff', [UserController::class, 'showStaffDashboard'])->name('homepageStaff');
     Route::get('/homepage-customer', [UserController::class, 'showCustomerDashboard'])->name('homepageCustomer');
+    Route::get('/homepage-admin', [UserController::class, 'showAdminDashboard'])->name('homepageAdmin');
 });
 
 
@@ -121,3 +122,35 @@ Route::get('/staff/feedback/{id}/response', [FeedbackController::class, 'showRes
 Route::post('/feedback/submit/{orderItemId}', [FeedbackController::class, 'submitResponse'])->name('feedback.submit');
 
 Route::get('/staff/feedback/past', [FeedbackController::class, 'feedbackPast'])->name('feedback.past');
+
+
+
+// routes/web.php
+
+// Admin Dashboard Route
+Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('adminDashboard');
+
+// Sales Monitoring Route
+Route::get('/admin/sales', [AdminController::class, 'monitorSales'])->name('monitorSales');
+
+
+
+// Sales Report Route
+Route::get('/admin/reports/sales', [AdminController::class, 'salesReport'])->name('salesReport');
+
+// Customer Report Route
+Route::get('/admin/reports/customers', [AdminController::class, 'customerReport'])->name('customerReport');
+// Route to display the list of staff for the admin
+Route::get('/admin/staff-list', [UserController::class, 'getStaffList'])->name('admin.staffList')->middleware('auth');
+
+Route::get('/staff/add', [UserController::class, 'createstaff'])->name('addStaff');
+Route::post('/staff/store', [UserController::class, 'storestaff'])->name('storeStaff');
+Route::get('/admin/staff/{id}', [UserController::class, 'admineditStaff'])->name('admin.editStaff');
+Route::put('/admin/staff/{id}', [UserController::class, 'updateStaff'])->name('updateStaff');
+Route::delete('/admin/staff/{id}', [UserController::class, 'deleteStaff'])->name('deleteStaff');
+
+// Route to display the list of customers
+Route::get('/admin/customers', [UserController::class, 'customerList'])->name('admin.customerList');
+
+// Route to delete a specific customer
+Route::delete('/admin/customers/{id}', [UserController::class, 'deleteCustomer'])->name('deleteCustomer');
