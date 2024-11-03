@@ -61,6 +61,7 @@ html, body {
 body {
     background-color: #f8f9fa;
     padding-top: 56px;
+    font-family: 'Lexend Exa', sans-serif !important;
 }
 
 .custom-container {

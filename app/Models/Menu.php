@@ -40,4 +40,11 @@ class Menu extends Model
     {
         return $this->hasMany(OrderItem::class, 'menuId');
     }
+
+    public function badFeedbacks()
+{
+    return $this->hasManyThrough(Feedback::class, OrderItem::class, 'menuId', 'orderitemId')
+                ->where('rating', '<=', 2); // Filter for ratings 1-2
+}
+
 }

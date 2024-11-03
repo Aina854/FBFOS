@@ -303,17 +303,50 @@ public function changePassword(Request $request, $id)
         }
     }
 
+    public function showStaffDashboard()
+    {
+        // Check if the user is logged in and has the staff role
+        if (Session::get('role') !== 'staff') {
+            return redirect()->route('login')->withErrors(['You do not have access to this page']);
+        }
+    
+        // Fetch items based on stock status
+        $lowStockItems = Menu::where('quantityStock', '<', 10)
+            ->where('quantityStock', '>', 0)
+            ->get();
+        $outOfStockItems = Menu::where('quantityStock', 0)->get();
+        $restockNeededItems = Menu::whereBetween('quantityStock', [10, 30])->get();
+    
+        // Fetch most poorly rated food items with their bad feedbacks
+        $badRatedItems = Menu::select('menus.menuId', 'menus.menuName', 'menus.menuImage')
+            ->join('orderitems', 'menus.menuId', '=', 'orderitems.menuId')
+            ->join('feedbacks', 'orderitems.orderitemId', '=', 'feedbacks.orderitemId')
+            ->selectRaw('menus.menuId, menus.menuName, menus.menuImage, AVG(feedbacks.rating) as avg_rating')
+            ->groupBy('menus.menuId', 'menus.menuName', 'menus.menuImage')
+            ->havingRaw('avg_rating BETWEEN 1 AND 2')
+            ->orderBy('avg_rating', 'asc')
+            ->with(['badFeedbacks']) // Load bad feedbacks
+            ->get();
 
-public function showStaffDashboard()
-{
-    // Check if the user is logged in and has the staff role
-    if (Session::get('role') !== 'staff') {
-        return redirect()->route('login')->withErrors(['You do not have access to this page']);
+            // Fetch frequently ordered items
+            $frequentlyOrderedItems = Menu::select('menus.menuId', 'menus.menuName', 'menus.menuImage')
+            ->join('orderitems', 'menus.menuId', '=', 'orderitems.menuId')
+            ->selectRaw('menus.menuId, menus.menuName, menus.menuImage, menus.price, COUNT(orderitems.orderitemId) as order_count')
+            ->groupBy('menus.menuId', 'menus.menuName', 'menus.menuImage', 'menus.price')
+            ->orderBy('order_count', 'desc')
+            ->take(3) // Get top 3 items
+            ->get();
+    
+        // Return the staff dashboard view with stock alert and bad rated items data
+        return view('staff/staff-home', [
+            'lowStockItems' => $lowStockItems,
+            'outOfStockItems' => $outOfStockItems,
+            'restockNeededItems' => $restockNeededItems,
+            'badRatedItems' => $badRatedItems,
+            'frequentlyOrderedItems' => $frequentlyOrderedItems,
+        ]);
     }
-
-    // Return the staff dashboard view
-    return view('staff/staff-home');
-}
+    
 
 public function showAdminDashboard()
 {
@@ -486,6 +519,8 @@ public function updateProfileStaff(Request $request, $id)
     // Redirect to the customer homepage with a success message
     return redirect()->route('editStaff', $user->id)->with('success', 'Profile updated successfully!');
 }
+
+
 
 
 public function getStaffList()

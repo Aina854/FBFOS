@@ -116,7 +116,7 @@ h2 {
 
 .sidebar {
     border: 1px solid #dee2e6; /* Optional border */
-    background: linear-gradient(135deg, #a9c1e7, #2b5b8f); /* Blue gradient */
+    background: linear-gradient(180deg, #D2B48C, #F5F5DC, white);
     border-radius: 0.25rem; /* Rounded corners */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
@@ -169,7 +169,7 @@ i {
 }
 
 .tips-card .card-header {
-    background-color: #004080; /* Dark blue background for the header */
+    background-color: #D2B48C; /* Dark blue background for the header */
     color: white; /* White text color for contrast */
     padding: 10px 15px; /* Padding around the header text */
     border-top-left-radius: 8px; /* Rounded corners for the top left */

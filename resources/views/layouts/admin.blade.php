@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Georama:ital,wght@0,100..900;1,100..900&family=Jua&family=Lexend+Exa:wght@100..900&display=swap" rel="stylesheet">
+
 </head>
 <body>
     @include('partials.navbar')

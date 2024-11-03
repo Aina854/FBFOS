@@ -1,22 +1,35 @@
+
+
 .hero-background {
-    background: linear-gradient(#eeedfc, #f2f2fd, #FFFFFF);
-    background-size: cover;
-    padding: 80px 0;
-    border-radius: 12px;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
-    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
 }
+
 .hero-text h2 {
-    font-size: 36px;
-    margin-bottom: 15px;
-    font-weight: bold;
-    color: black;
+    font-size: 2.5rem; /* Adjust size */
+    margin-bottom: 10px;
 }
-.hero-text p {
-    font-size: 18px;
-    max-width: 600px;
-    margin: 0 auto;
+
+.hero-text {
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
 
 /* Create a subtle glowing flow animation */
 @keyframes smoothFlow {

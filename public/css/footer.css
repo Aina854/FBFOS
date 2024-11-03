@@ -1,7 +1,9 @@
 footer {
-    background: linear-gradient(135deg, #87CEEB, #6A5ACD);
-    color: #ecf0f1;
+    background: linear-gradient(90deg, #F5F5DC, #D2B48C);
+    color: black;
     text-align: center;
     width: 100%;
     padding: 20px 0;
+    font-family: 'Lexend Exa', sans-serif;
+    font-weight: bold;
 }

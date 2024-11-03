@@ -35,7 +35,7 @@
                                         alt="Image of {{ $cartItem->menu->menuName }}">    
                                 </div>
                                 <p class="item-name" style="font-size: 1.0em;">{{ $cartItem->menu->menuName }}</p>
-                                <span style="font-size: 0.8em; color: darkgrey;">Available Stock: {{ $cartItem->menu->quantityStock }}</span>
+                                <span style="font-size: 0.7em; color: darkgrey;">Available Stock: {{ $cartItem->menu->quantityStock }}</span>
                             </td>
                             <td>RM{{ number_format($cartItem->price, 2) }}</td>
                             <td>

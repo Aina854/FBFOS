@@ -1,15 +1,30 @@
 .welcome-section {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    position: relative;
+    height: 400px; /* Adjust height as needed */
+    background-size: cover;
+    background-position: center;
+    color: #fff; /* Text color */
 }
 .welcome-section h2 {
-    font-size: 28px;
+    font-family: 'Lexend Exa', sans-serif; /* Use the professional cursive font */
+    font-size: 43px;
     margin-bottom: 10px;
+    color: #333; /* Darker color for professionalism */
+    text-align: center; /* Center the text */
+    font-weight: normal; /* Normal weight for cursive fonts */
+    letter-spacing: 0.5px; /* Slightly spaced for readability */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Optional soft shadow */
 }
+
 .welcome-section p {
     font-size: 16px;
     color: #555;
+}
+
+.welcome-section h6 {
+    font-family: 'Lexend Exa', sans-serif; /* Use the professional cursive font */
+    font-size: 18px; /* Adjust size as needed */
+    text-align: center; /* Center the motto */
+    color: #333; /* Choose a color that complements your design */
+    margin: 20px 0; /* Space around the motto */
 }

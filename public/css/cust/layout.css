@@ -1,7 +1,7 @@
 /* Layout and body styles */
 body {
     padding-top: 56px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Lexend Exa', sans-serif !important;
     background-color: #f8f9fa;
     min-height: 100vh;
     position: relative;

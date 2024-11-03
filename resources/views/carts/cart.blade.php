@@ -120,10 +120,10 @@
                                         } else {
                                             echo 'green'; 
                                         }
-                                    ?>
-                                ">
-                                Available Quantity: {{ $menuItem->quantityStock }}
+                                    ?>; font-size: 13px;">  <!-- Adjust the font size as needed -->
+                                Available Stock: {{ $menuItem->quantityStock }}
                             </p>
+
 
                             <form action="{{ route('cart.addSideOrder', ['cartId' => $cart->cartId]) }}" method="POST">
                                 @csrf

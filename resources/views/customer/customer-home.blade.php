@@ -33,9 +33,10 @@
         <div class="welcome-section">
             <br><br>
             <div class="welcome-content">
+                
                 <h2 class="display-4">Welcome {{ auth()->user()->firstName }}!</h2>
-                <br><br>
-                <p>We’re thrilled to see you at Fariz's Bistro. Browse our menu and let us serve you a great meal today!</p>
+                <br>
+                <p>Welcome to Fariz's Bistro! Enjoy a great meal today!</p>
             </div>
         </div>
         <br>

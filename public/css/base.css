@@ -2,7 +2,7 @@
 body {
     margin: 0;
     height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Lexend Exa', sans-serif !important;
     background: linear-gradient(to bottom right, #000000, #40e0d0, #87ceeb);
 }
 
