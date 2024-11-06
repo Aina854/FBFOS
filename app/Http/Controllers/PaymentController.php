@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log as LogFacade; // Alias the Log facade
+use App\Models\Log;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\CartItem;
@@ -22,7 +23,7 @@ class PaymentController extends Controller
     {
         // Set the Stripe API key
         Stripe::setApiKey('sk_test_51Q50H5HFO4bNfGB64aMg9YlREfOJzP68qTMOw3g4EFzZhVlT8VeVTYzkc3OvMMoDXV10KpVwOYhCYfRMGYuch01k00JFpNmXqx');
-        Log::info('Stripe API key set.');
+        
     }
 
     public function proceedToPayment(Request $request, $cartId)
@@ -32,7 +33,7 @@ class PaymentController extends Controller
     $payment = null;
     $lineItems = []; // Define lineItems here
 
-    Log::info('Proceeding to payment', ['cartId' => $cartId]);
+    
 
     try{
     DB::transaction(function () use ($request, $cartId, &$order, &$totalAmount, &$payment, &$lineItems) {
@@ -42,7 +43,7 @@ class PaymentController extends Controller
             'OrderStatus' => 'Pending',
             'OrderDate' => Carbon::now(),
         ]);
-        Log::info('New order created', ['orderId' => $order->orderId]);
+        
 
         // Retrieve items from the cart and add them to the order
         $cartItems = CartItem::where('cartId', $cartId)->get();
@@ -50,12 +51,12 @@ class PaymentController extends Controller
             Log::error('Cart is empty', ['cartId' => $cartId]);
             throw new \Exception('Cart is empty!');
         }
-        Log::info('Retrieved cart items', ['cartItems' => $cartItems]);
+        
 
         foreach ($cartItems as $item) {
             // Retrieve menu item details
             $menuItem = Menu::findOrFail($item->menuId); // Ensure you have the correct model for your items
-            Log::info('Retrieved menu item', ['menuItemId' => $menuItem->menuId]);
+            
 
             // Check stock availability
         if ($item->quantity > $menuItem->quantityStock) {
@@ -74,13 +75,7 @@ class PaymentController extends Controller
                 'totalPrice' => $item->quantity * $item->price,
                 'remarks' => $remarksForItem, // Store the remarks here
             ]);
-            Log::info('Order item created', [
-                'orderId' => $order->orderId,
-                'menuId' => $item->menuId,
-                'quantity' => $item->quantity,
-                'price' => $item->price,
-                'remarks' => $request->input('remarks', null), // Logging remarks
-            ]);
+            
 
             // Deduct stock from the menu item
             $menuItem->quantityStock -= $item->quantity;
@@ -109,11 +104,11 @@ class PaymentController extends Controller
 
         // Clear the cart after transferring items
         CartItem::where('cartId', $cartId)->delete();
-        Log::info('Cleared cart items', ['cartId' => $cartId]);
+        
 
         // Calculate total amount
         $totalAmount = OrderItem::where('orderId', $order->orderId)->sum('totalPrice');
-        Log::info('Calculated total amount', ['totalAmount' => $totalAmount]);
+        
 
         // Create payment record with a temporary null for stripe_session_id
         $payment = Payment::create([
@@ -125,16 +120,12 @@ class PaymentController extends Controller
             'paymentMethod' => null,
             'stripe_session_id' => null, // Temporary null
         ]);
-        Log::info('Payment record created', ['paymentId' => $payment->id]);
+        
 
          // Increment the payment attempts and update the last_attempt_at field
         $payment->increment('attempts');
         $payment->update(['last_attempt_at' => Carbon::now()]);
-        Log::info('Payment attempts incremented and last attempt time updated', [
-            'paymentId' => $payment->id,
-            'attempts' => $payment->attempts,
-            'last_attempt_at' => $payment->last_attempt_at,
-        ]);
+        
     });
 
 } catch (\Exception $e) {
@@ -142,10 +133,7 @@ class PaymentController extends Controller
     return redirect()->back()->with('error', $e->getMessage());
 }
 
-    Log::info('Line items for Stripe', ['lineItems' => $lineItems]);
-
-    Log::info('Success URL', ['url' => route('payment.success', ['orderId' => $order->orderId])]);
-    Log::info('Cancel URL', ['url' => route('payment.cancel')]);
+    
     
     // Stripe Checkout Session
     try {
@@ -164,7 +152,7 @@ class PaymentController extends Controller
         $payment->update([
             'stripe_session_id' => $checkoutSession->id,
         ]);
-        Log::info('Checkout session created', ['checkoutSession' => $checkoutSession]);
+        
 
         return redirect($checkoutSession->url);
     } catch (\Stripe\Exception\ApiErrorException $e) {
@@ -181,8 +169,9 @@ public function paymentSuccess($orderId)
     // Retrieve payment and order details
     $payment = Payment::where('orderId', $orderId)->first();
     $order = Order::findOrFail($orderId);
+    $paymentAmount = number_format($payment->paymentAmount, 2); // Format the payment amount
 
-    Log::info('Payment success initiated', ['orderId' => $orderId]);
+    
 
     // Check if stripe_session_id exists
     if (!$payment || !$payment->stripe_session_id) {
@@ -219,11 +208,21 @@ public function paymentSuccess($orderId)
                 'receiptUrl' => $checkoutSession->receipt_url,
             ]);
 
-            Log::info('Payment updated', [
-                'paymentId' => $payment->id,
-                'paymentStatus' => $payment->paymentStatus,
-                'receiptUrl' => $payment->receiptUrl,
-                'paymentMethodUsed' => $paymentMethodUsed,
+
+            // Log the successful payment and order creation
+            Log::create([
+                'user_id' => Auth::id(), // ID of the user who made the order
+                'action' => 'Create Payment',
+                'details' => 'Payment of RM ' . $paymentAmount . ' received from ' . Auth::user()->name . ' (customer)',
+                'created_at' => now(), // Current timestamp
+            ]);
+
+            // Log the successful payment and order creation
+            Log::create([
+                'user_id' => Auth::id(), // ID of the user who made the order
+                'action' => 'Create Order',
+                'details' => 'New order #' . $orderId .' placed by ' . Auth::user()->name . ' (customer)',
+                'created_at' => now(), // Current timestamp
             ]);
 
             // Retrieve the order items associated with the order
@@ -256,7 +255,7 @@ public function paymentSuccess($orderId)
                 'orderId' => $orderId,
             ]);
         } else {
-            Log::info('Payment incomplete or failed', ['status' => $paymentIntent->status]);
+            
 
             // Handle accordingly, you could redirect or show a failed message
             session()->flash('alert', 'Payment failed or incomplete. Please try again.');
@@ -272,11 +271,11 @@ public function paymentSuccess($orderId)
 
 public function paymentCancel(Request $request)
 {
-    Log::info('Payment was cancelled.', ['request' => $request->all()]);
+    
 
     // Retrieve the order ID from the request
     $orderId = $request->input('orderId');
-    Log::info('Received orderId for cancellation', ['orderId' => $orderId]);
+    
     
     // Fetch the payment associated with the order
     $payment = Payment::where('orderId', $orderId)->first();
@@ -291,7 +290,7 @@ public function paymentCancel(Request $request)
                 // Revert quantity stocks if payment has failed after 3 attempts
                 $this->revertQuantityStocks($orderId);
                 $order->update(['OrderStatus' => 'Failed']); // Update order status to Failed
-                Log::info('Order status updated to Failed', ['orderId' => $orderId]);
+                
             } else {
                 Log::error('Order not found for updating status to Failed', ['orderId' => $orderId]);
             }
@@ -301,15 +300,12 @@ public function paymentCancel(Request $request)
         
         // Update the payment status to 'Pending'
         $payment->update(['paymentStatus' => 'Pending']);
-        Log::info('Payment status updated to Pending', ['paymentId' => $payment->id]);
+        
 
         // Check if a Stripe session ID is provided in the request
         if ($request->has('session_id')) {
             $payment->update(['stripe_session_id' => $request->input('session_id')]);
-            Log::info('Stored Stripe session ID on cancellation', [
-                'paymentId' => $payment->id,
-                'stripe_session_id' => $request->input('session_id'),
-            ]);
+            
         }
     } else {
         Log::error('Payment not found for cancellation', ['orderId' => $orderId]);
@@ -322,7 +318,7 @@ public function paymentCancel(Request $request)
     if ($order) {
         // Update the order status to 'Pending'
         $order->update(['OrderStatus' => 'Pending']);
-        Log::info('Order status updated to Pending', ['orderId' => $orderId]);
+        
     } else {
         Log::error('Order not found for cancellation', ['orderId' => $orderId]);
         return redirect()->back()->with('alert', 'Order not found.');
@@ -349,7 +345,7 @@ protected function revertQuantityStocks($orderId)
         $menuItem = Menu::find($item->menuId);
         if ($menuItem) {
             $menuItem->increment('quantityStock', $item->quantity); // Revert the stock quantity
-            Log::info('Reverted stock quantity for menu item', ['menuId' => $menuItem->id, 'quantity' => $item->quantity]);
+            
         } else {
             Log::error('Menu item not found for stock revert', ['menuId' => $item->menuId]);
         }
@@ -387,7 +383,7 @@ public function payAgain($orderId)
            // Revert quantity stocks if payment has failed after 3 attempts
            $this->revertQuantityStocks($orderId);
            $order->update(['OrderStatus' => 'Failed']); // Update order status to Failed
-           Log::info('Order status updated to Failed', ['orderId' => $orderId]);
+           
        }
        return redirect()->route('homepageCustomer')->with('alert', 'You have exceeded the maximum number of payment attempts within 24 hours. Please consider making a new purchase when you are ready.');
     }
@@ -402,7 +398,7 @@ public function payAgain($orderId)
    //        // Revert quantity stocks if payment has failed after 3 attempts
    //        $this->revertQuantityStocks($orderId);
    //        $order->update(['OrderStatus' => 'Failed']); // Update order status to Failed
-   //        Log::info('Order status updated to Failed', ['orderId' => $orderId]);
+  
    //    }
    //    return redirect()->back()->with('alert', 'You have exceeded the maximum number of payment attempts within 24 hours. Please consider making a new purchase when you are ready.');
    //}
@@ -421,7 +417,7 @@ public function payAgain($orderId)
     $totalAmount = $payment->paymentAmount; // Use the existing payment amount
 
     // Log for debugging
-    Log::info('Retrying payment for order', ['orderId' => $orderId, 'paymentId' => $payment->id]);
+    
     /// Use the Ngrok URL for the image
     $ngrokUrl = 'https://399c-210-186-147-9.ngrok-free.app'; // Update to the new Ngrok URL
 
@@ -465,7 +461,7 @@ public function payAgain($orderId)
             'paymentStatus' => 'Pending', // Update to Pending since it's a retry
         ]);
 
-        Log::info('Checkout session created', ['checkoutSession' => $checkoutSession]);
+        
 
         return redirect($checkoutSession->url);
     } catch (\Stripe\Exception\ApiErrorException $e) {
@@ -499,7 +495,7 @@ public function handleWebhook(Request $request)
             $order = Order::where('payment_intent_id', $paymentIntent->id)->first();
             if ($order) {
                 $order->update(['OrderStatus' => 'failed']);
-                Log::info('Order updated as failed', ['orderId' => $order->id]);
+                
 
                 // Optionally, notify the user
                 session()->flash('alert', 'Payment failed. Please try again.');

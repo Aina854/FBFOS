@@ -20,6 +20,24 @@
             </li>
         </ul>
     </div>
+
+    <!-- Tips Section -->
+<div class="col-md-3 mt-4">
+    <div class="card tips-card">
+        <div class="card-header">
+            <h4>Tips for Staff</h4>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li>1. Print order</li>
+                <li>2. Then click accept</li>
+            </ul>
+            <div class="alert alert-warning mt-2">
+                Note: Once you accept the order, you will not be able to print it anymore.
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
 

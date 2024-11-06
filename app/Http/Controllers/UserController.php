@@ -7,11 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Menu;
 use App\Models\Cart;
+use App\Models\Payment;
+use App\Models\Log;
 use App\Models\Order; // Make sure to include your Order model
 use App\Models\OrderItem; // Make sure to include your Order model
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log as LogFacade; // Alias the Log facade
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
+
 
 class UserController extends Controller
 {
@@ -51,16 +55,16 @@ class UserController extends Controller
     if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
         Session::put('role', strtolower($user->category));
 
-        Log::info('User logged in with ID: ' . $user->id . ' and category: ' . $user->category);
+        
 
         // Only create cart if user is a customer and no existing cart is found
         if (strtolower($user->category) === 'customer') {
             $existingCart = Cart::where('user_id', $user->id)->first();
             if (!$existingCart) {
-                Log::info('Creating cart for user ID: ' . $user->id);
+                
                 app(CartController::class)->createCartForUser($user->id);
             } else {
-                Log::info('Cart already exists for user ID: ' . $user->id, ['cartId' => $existingCart->cartId]);
+                
                 Session::put('cartId', $existingCart->cartId); // Store existing cart ID in session
             }
         }
@@ -143,18 +147,23 @@ class UserController extends Controller
         app(CartController::class)->createCartForUser($user->id);
     }
 
+    // Log the registration activity for the user
+    Log::create([
+        'user_id' => $user->id,
+        'action' => 'User Registered',
+        'details' => 'Customer registered with email: ' . $user->email,
+    ]);
+
     // Log the cart ID after creation (optional)
     $cartId = Session::get('cartId');
-    Log::info('Cart ID after creation: ', ['cartId' => $cartId]);
+    
 
     return redirect()->route('login')->with('success', 'Successfully registered!');
 }
 
 public function changePassword(Request $request, $id)
     {
-        // Log when the method is called
-        Log::info('changePassword method called for user ID: ' . $id);
-        \Log::info('Change Password Form Submitted', $request->all()); // Check the request data
+        
 
         $user = User::findOrFail($id);
 
@@ -167,7 +176,7 @@ public function changePassword(Request $request, $id)
         $user->password = Hash::make($request->password);
         $user->save();
         // Log success message
-        Log::info('Password successfully updated for user ID: ' . $id);
+        
 
         // Set a success message
         session()->flash('success', 'Password updated successfully.');
@@ -177,10 +186,7 @@ public function changePassword(Request $request, $id)
 
     public function changePasswordStaff(Request $request, $id)
     {
-        // Log when the method is called
-        Log::info('changePasswordStaff method called for user ID: ' . $id);
-        \Log::info('Change Password Staff Form Submitted', $request->all()); // Check the request data
-
+        
         $user = User::findOrFail($id);
 
         // Validate passwords
@@ -191,8 +197,7 @@ public function changePassword(Request $request, $id)
         // Update password
         $user->password = Hash::make($request->password);
         $user->save();
-        // Log success message
-        Log::info('Password successfully updated for user ID: ' . $id);
+        
 
         // Set a success message
         session()->flash('success', 'Password updated successfully.');
@@ -210,7 +215,7 @@ public function changePassword(Request $request, $id)
     public function updateUser(Request $request, $id)
     {
 
-        Log::info('Update user method hit');
+        
         // Validate update form data
         $request->validate([
             'firstName' => 'required|string',
@@ -250,7 +255,7 @@ public function changePassword(Request $request, $id)
             'category' => $request->category,
         ]);
 
-        Log::info('User updated: ' . $user->id);
+        
 
         return redirect()->route('editProfile', $user->id)->with('success', 'Profile updated successfully!');
     }
@@ -347,17 +352,75 @@ public function changePassword(Request $request, $id)
         ]);
     }
     
-
-public function showAdminDashboard()
+    public function showAdminDashboard()
 {
-    // Check if the user is logged in and has the staff role
+    // Check if the user is logged in and has the admin role
     if (Session::get('role') !== 'admin') {
         return redirect()->route('login')->withErrors(['You do not have access to this page']);
     }
 
-    // Return the staff dashboard view
-    return view('admin/admin-home');
+    // Get total payment amount
+    $totalPayments = Payment::sum('paymentAmount');
+
+    // Get total number of orders
+    $totalOrders = Order::count();
+
+    // Get total number of customers
+    $totalCustomers = User::where('category', 'Customer')->count(); 
+
+    // Get total number of staff
+    $totalStaff = User::where('category', 'Staff')->count();
+
+    // Retrieve the latest 7 log entries
+    $recentActivities = Log::orderBy('created_at', 'desc')->take(7)->get();
+
+    // Get the top three selling food items
+    $topSellingFoods = DB::table('orderitems')
+        ->select('menuId', DB::raw('COUNT(*) as total_sales'))
+        ->groupBy('menuId')
+        ->orderBy('total_sales', 'desc')
+        ->take(5)
+        ->get();
+
+    // Get details for each top-selling food item including menuImage
+    $topFoodsDetails = [];
+    foreach ($topSellingFoods as $food) {
+        $menuItem = Menu::find($food->menuId);
+        if ($menuItem) {
+            $topFoodsDetails[] = [
+                'name' => $menuItem->menuName,
+                'description' => $menuItem->description ?? 'Popular choice',
+                'price' => $menuItem->price,
+                'menuImage' => $menuItem->menuImage, // Include the image
+                'total_sales' => $food->total_sales, // Include the total sales count
+            ];
+        }
+    }
+
+
+    // Get highest and lowest rated foods
+    $highestRatedFood = DB::table('feedbacks')
+        ->join('orderitems', 'feedbacks.orderitemId', '=', 'orderitems.orderitemId')
+        ->join('menus', 'orderitems.menuId', '=', 'menus.menuId')
+        ->select('menus.menuName', 'menus.menuImage', DB::raw('AVG(feedbacks.rating) as average_rating'), DB::raw('COUNT(feedbacks.feedbackId) as total_ratings'))
+        ->groupBy('menus.menuId','menus.menuName', 'menus.menuImage')
+        ->orderByDesc('average_rating')
+        ->first();
+
+    $lowestRatedFood = DB::table('feedbacks')
+        ->join('orderitems', 'feedbacks.orderitemId', '=', 'orderitems.orderitemId')
+        ->join('menus', 'orderitems.menuId', '=', 'menus.menuId')
+        ->select('menus.menuName', 'menus.menuImage', DB::raw('AVG(feedbacks.rating) as average_rating'), DB::raw('COUNT(feedbacks.feedbackId) as total_ratings'))
+        ->groupBy('menus.menuId', 'menus.menuName', 'menus.menuImage')
+        ->orderBy('average_rating')
+        ->first();
+
+
+    // Return the admin dashboard view with the necessary data
+    return view('admin.admin-home', compact('totalPayments', 'totalOrders', 'totalCustomers', 'totalStaff', 'recentActivities', 'topFoodsDetails', 'highestRatedFood', 'lowestRatedFood'));
 }
+
+
 
 public function showCustomerDashboard()
 {
@@ -431,7 +494,7 @@ public function editStaff()
  */
 public function updateProfile(Request $request, $id)
 {
-    Log::info('Update user method hit');
+    
     // Fetch the user by ID
     $user = User::findOrFail($id); // Ensure the user exists
 
@@ -467,6 +530,13 @@ public function updateProfile(Request $request, $id)
         'state' => $request->state,
         'name' => $request->name,
         'password' => $request->password ? Hash::make($request->password) : $user->password,
+    ]);
+
+    // Insert a log entry
+    Log::create([
+        'user_id' => $user->id,
+        'action' => 'Profile updated', // Describe the activity
+        'details' => $user->name . ' (customer) updated their profile.', // Specific details
     ]);
 
     // Redirect to the customer homepage with a success message
@@ -475,8 +545,7 @@ public function updateProfile(Request $request, $id)
 
 public function updateProfileStaff(Request $request, $id)
 {
-    Log::info('Update staff method hit');
-    \Log::info('Update Staff Form Submitted', $request->all()); // Check the request data
+    
     // Fetch the user by ID
     $user = User::findOrFail($id); // Ensure the user exists
 
@@ -497,7 +566,7 @@ public function updateProfileStaff(Request $request, $id)
         'password' => 'nullable|string|confirmed',
     ]);
 
-    Log::info('Validation staff method hit');
+    
     // Update user details
     $user->update([
         'firstName' => $request->firstName,
@@ -514,7 +583,13 @@ public function updateProfileStaff(Request $request, $id)
         'name' => $request->name,
         'password' => $request->password ? Hash::make($request->password) : $user->password,
     ]);
-    Log::info('Update staff method update');
+    
+    // Insert a log entry
+    Log::create([
+        'user_id' => $user->id,
+        'action' => 'Profile updated', // Describe the activity
+        'details' => $user->name . ' (staff) updated their profile.', // Specific details
+    ]);
 
     // Redirect to the customer homepage with a success message
     return redirect()->route('editStaff', $user->id)->with('success', 'Profile updated successfully!');
@@ -558,6 +633,13 @@ public function storestaff(Request $request)
 
     $staff->save();
 
+    Log::create([
+        'user_id' => Auth::id(), // The ID of the admin performing the action
+        'action' => 'Add Staff',
+        'details' => Auth::user()->name . ' (admin) added new staff: ' . $staff->name,
+        'created_at' => now(), // Current timestamp
+    ]);
+    
     return redirect()->route('admin.staffList')->with('success', 'New staff member added successfully');
 }
 
@@ -589,6 +671,13 @@ public function updateStaff(Request $request, $id)
     // Save the updated staff member data
     $staff->save();
 
+    Log::create([
+        'user_id' => Auth::id(), // The ID of the admin performing the action
+        'action' => 'Edit Staff',
+        'details' => Auth::user()->name . ' (admin) edit profile for staff: ' . $staff->name,
+        'created_at' => now(), // Current timestamp
+    ]);
+
     // Redirect back to the staff list with a success message
     return redirect()->route('admin.staffList')->with('success', 'Staff member updated successfully.');
 }
@@ -600,6 +689,13 @@ public function deleteStaff($id)
 
     // Delete the staff member
     $staff->delete();
+
+    Log::create([
+        'user_id' => Auth::id(), // The ID of the admin performing the action
+        'action' => 'Delete Staff',
+        'details' => Auth::user()->name . ' (admin) deleted staff: ' . $staff->name,
+        'created_at' => now(), // Current timestamp
+    ]);
 
     // Redirect back to the staff list with a success message
     return redirect()->route('admin.staffList')->with('success', 'Staff member deleted successfully.');
@@ -620,6 +716,13 @@ public function deleteCustomer($id)
 {
     $customer = User::findOrFail($id);
     $customer->delete();
+
+    Log::create([
+        'user_id' => Auth::id(), // The ID of the admin performing the action
+        'action' => 'Delete Customer',
+        'details' => Auth::user()->name . ' (admin) deleted customer: ' . $customer->name,
+        'created_at' => now(), // Current timestamp
+    ]);
 
     // Set a success message in the session
     return redirect()->route('admin.customerList')->with('success', 'Customer deleted successfully.');

@@ -21,7 +21,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('listMenu') ? 'active' : '' }}" href="{{ route('listMenu') }}">
+                    <a class="nav-link {{ request()->routeIs('dailySalesData') ? 'active' : '' }}" href="{{ route('dailySalesData') }}">
                         <i class="fas fa-chart-line"></i> Sales
                     </a>
                 </li>

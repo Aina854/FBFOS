@@ -125,21 +125,7 @@ Route::get('/staff/feedback/past', [FeedbackController::class, 'feedbackPast'])-
 
 
 
-// routes/web.php
-
-// Admin Dashboard Route
-Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('adminDashboard');
-
-// Sales Monitoring Route
-Route::get('/admin/sales', [AdminController::class, 'monitorSales'])->name('monitorSales');
-
-
-
-// Sales Report Route
-Route::get('/admin/reports/sales', [AdminController::class, 'salesReport'])->name('salesReport');
-
-// Customer Report Route
-Route::get('/admin/reports/customers', [AdminController::class, 'customerReport'])->name('customerReport');
+// Admin
 // Route to display the list of staff for the admin
 Route::get('/admin/staff-list', [UserController::class, 'getStaffList'])->name('admin.staffList')->middleware('auth');
 
@@ -154,3 +140,13 @@ Route::get('/admin/customers', [UserController::class, 'customerList'])->name('a
 
 // Route to delete a specific customer
 Route::delete('/admin/customers/{id}', [UserController::class, 'deleteCustomer'])->name('deleteCustomer');
+
+
+// In routes/web.php
+
+
+Route::get('/admin/daily-sales', [OrderController::class, 'dailySalesData'])->name('dailySalesData');
+Route::get('/admin/weekly-sales', [OrderController::class, 'weeklySalesData'])->name('weeklySalesData');
+Route::get('/admin/monthly-sales', [OrderController::class, 'monthlySalesData'])->name('monthlySalesData');
+Route::get('/admin/yearly-sales', [OrderController::class, 'yearlySalesData'])->name('yearlySalesData');
+

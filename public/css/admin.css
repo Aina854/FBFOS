@@ -69,17 +69,56 @@ body {
     margin-top: 20px;
 }
 
-/* Custom Dashboard Styles */
-.hero-background {
-    color: #fff;
-    background: linear-gradient(to right, #2c3e50, #4ca1af);
-    padding: 60px 0;
+/* Welcome Section Styling */
+.welcome-section {
+    position: relative;
+    height: 400px; /* Adjust height as needed */
+    background-size: cover; /* Ensure the image covers the entire area */
+    background-position: center center; /* Center the background image */
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.hero-text h2 {
-    font-size: 2.5rem;
-    font-weight: bold;
+/* Hero Background Overlay */
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
 }
+
+/* Hero Text Styling */
+.hero-text {
+    position: relative;
+    z-index: 2; /* Ensure text is on top of the background */
+    color: #fff; /* White text for contrast */
+    text-align: center;
+    padding: 20px;
+}
+
+/* Heading Style */
+.hero-text h2 {
+    font-size: 2.5em; /* Larger text for the welcome message */
+    font-weight: bold;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Paragraph Style */
+.hero-text p {
+    font-size: 1.2em;
+    font-weight: 300;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+}
+
 
 .container h3 {
     color: #555;
@@ -135,3 +174,117 @@ body {
     background-color: #218838;
     border-color: #1e7e34;
 }
+
+
+.food-items {
+    margin-top: 20px;
+}
+
+.food-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Space between food items */
+}
+
+
+
+.food-item:hover {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+
+
+.sales-bar {
+    background-color: #28a745;
+    height: 30px;
+    border-radius: 5px;
+    margin-right: 15px;
+    position: relative;
+    
+    animation: loadBar 1s ease forwards; /* Trigger animation */
+}
+
+@keyframes loadBar {
+    from {
+        width: 0;
+    }
+    to {
+        width: var(--bar-width); /* Set dynamically via inline styles */
+    }
+}
+
+
+.food-info {
+    flex: 1; /* Take available space */
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.food-image {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+
+.sales-value {
+    position: absolute;
+    color: white;
+    right: 5px;
+    top: 0;
+    line-height: 30px;
+    font-weight: bold;
+    animation: pulse 1s ease-in-out infinite; /* Pulse effect */
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1); /* Slight increase */
+    }
+}
+
+
+.sales-count {
+    display: block; /* Ensure it appears on a new line */
+    font-size: 12px; /* Smaller font size */
+    color: #555; /* Optional: Change color for better visibility */
+    margin-top: 5px; /* Space between the bar and the sales count */
+    text-align: center; /* Center align for better look */
+}
+
+
+.top-selling-container {
+    display: flex; /* Use flexbox to create a two-column layout */
+}
+
+.left-section {
+    flex: 1; /* Take available space */
+    margin-right: 20px; /* Space between left and right sections */
+}
+
+.right-section {
+    flex: 1; /* Take available space, but empty */
+    background-color: #f8f9fa; /* Optional: Background color for visibility */
+    /* You can set height or other styles if needed */
+    height: 100%; /* Match height to the left section if needed */
+}
+
+/* Shine animation for the icon */
+@keyframes shine {
+    0% {
+        text-shadow: 0 0 5px gold, 0 0 10px gold, 0 0 15px gold;
+    }
+    100% {
+        text-shadow: 0 0 20px gold, 0 0 30px gold, 0 0 40px gold;
+    }
+}
+

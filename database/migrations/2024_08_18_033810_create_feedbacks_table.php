@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('feedbacks', function (Blueprint $table) {
-            $table->increments('feedbackId'); // Primary key for the feedbacks table
+            $table->increments('feedbackId'); // Primary key for the feedbacks table 
             $table->unsignedInteger('orderItemId'); // Foreign key or other column
             $table->integer('rating'); // Rating given
             $table->text('comments'); // Comments about the feedback

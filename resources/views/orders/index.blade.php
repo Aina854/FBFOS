@@ -150,20 +150,24 @@
                                     <ul>
                                         @foreach($order->orderItems as $item)
                                             <li>{{ $item->menu->menuName }} x{{ $item->quantity }} - RM{{ number_format($item->price, 2) }} for each ({{ $item->remarks }})</li>
-                                            
                                         @endforeach
                                     </ul>
                                 </div>
 
-                                <!-- Check if feedback has been submitted for the order -->
-                                @if ($order->feedbackSubmitted)
+                                <!-- Check if the order status is 'Failed' -->
+                                @if ($order->OrderStatus == 'Failed')
+                                    <!-- Show Contact Support button for failed orders -->
+                                    <a href="https://wa.me/60199687438?text=I%20need%20help%20with%20my%20order%20#{{ $order->orderId }}%20(Order%20Failed)." class="btn btn-danger" target="_blank">
+                                        Contact Support
+                                    </a>
+
+                                @elseif ($order->feedbackSubmitted)
                                     <!-- Feedback has been submitted, show the view feedback button -->
                                     <a href="{{ route('feedback.index', ['orderId' => $order->orderId]) }}" class="btn btn-secondary">View Feedback</a>
                                 @else
                                     <!-- Feedback has not been submitted, show the leave feedback button -->
                                     <a href="{{ route('feedback.create', ['orderId' => $order->orderId]) }}" class="btn btn-primary">Leave Feedback</a>
                                 @endif
-
 
                             </div>
 
@@ -185,6 +189,7 @@
         </div>
     @endif
 </div>
+
 
 </div>
 

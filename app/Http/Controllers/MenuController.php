@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\User;
+use App\Models\Log; // Ensure you have the Log model imported
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -58,6 +61,14 @@ class MenuController extends Controller
         }
         $menu->save();
 
+        // Log the creation of the menu item
+        Log::create([
+            'user_id' => Auth::id(), // The ID of the admin performing the action
+            'action' => 'Create Menu Item',
+            'details' => Auth::user()->name . ' (staff) added a new menu item: ' . $menu->menuName,
+            'created_at' => now(), // Current timestamp
+        ]);
+
         return redirect()->route('menus.index')->with('success', 'Menu item created successfully.');
     }
 
@@ -99,6 +110,14 @@ class MenuController extends Controller
         }
         $menu->update($request->except('menuImage'));
 
+        // Log the creation of the menu item
+        Log::create([
+            'user_id' => Auth::id(), // The ID of the admin performing the action
+            'action' => 'Edit Menu Item',
+            'details' => Auth::user()->name . ' (staff) edit a menu item: ' . $menu->menuName,
+            'created_at' => now(), // Current timestamp
+        ]);
+
         return redirect()->route('menus.index')->with('success', 'Menu item updated successfully.');
     }
 
@@ -113,6 +132,14 @@ class MenuController extends Controller
         }
 
         $menu->delete();
+
+        // Log the creation of the menu item
+        Log::create([
+            'user_id' => Auth::id(), // The ID of the admin performing the action
+            'action' => 'Delete Menu Item',
+            'details' => Auth::user()->name . ' (staff) delete a menu item: ' . $menu->menuName,
+            'created_at' => now(), // Current timestamp
+        ]);
         return redirect()->route('menus.index')->with('success', 'Menu item deleted successfully.');
     }
 }
